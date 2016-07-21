@@ -11,7 +11,7 @@ Luves是一个轻量级的事件触发网络库,封装了Socket,简化基于Sock
  
 
 
-###<a id="title00"/> 写在前面
+##<a id="title00"/> 写在前面
 
 在阅读一些知名开源代码(如Moduo,Libevent)的后,深感其代码的复杂性。通过阅读Moduo库的作者陈硕的[Linux 多线程服务端编程：使用 muduo C++ 网络库](https://book.douban.com/subject/20471211/),我尝试将自己理解的网络框架以"学习"的标准实现,简化复杂网络库的细节部分,使同学们在初学的时候能快速理解网络库的本质,必要的地方注释了代码实现思路。
 
@@ -19,16 +19,16 @@ Luves是一个轻量级的事件触发网络库,封装了Socket,简化基于Sock
 
 
 
-###<a id="title01"/> 安装
+##<a id="title01"/> 安装
 
 	make install
 
 
 
-###<a id="title02"> 技术实现
+##<a id="title02"> 技术实现
 
 
-###<a id="title03"> 示例
+##<a id="title03"> 示例
 简单的半同步/半异步服务器
 
 	#include "luves.h"
@@ -57,14 +57,14 @@ Luves是一个轻量级的事件触发网络库,封装了Socket,简化基于Sock
 
 
 
-###<a id="title04"/> 版本更新日志
+##<a id="title04"/> 版本更新日志
 Version 0.01
 
 - 原型开发,目前仅使用kqueue,暂支持OS X系统,实现半同步半异步服务器框架.封装了IO事件与定时事件。
 
 
 
-###<a id="title04"/> License
+##<a id="title04"/> License
 MIT
 
  [0]:#title00
