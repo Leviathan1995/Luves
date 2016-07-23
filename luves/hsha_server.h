@@ -20,32 +20,28 @@ namespace luves
 {
     
     //
-    //半同步半异步模式
+    //HSHA model
     //
-    typedef std::shared_ptr<TcpConnection> TcpConnectionPtr;
     typedef std::shared_ptr<TcpServer> TcpServerPtr;
-    typedef std::function<void (const TcpConnectionPtr &)> HshaCallBack;
+    typedef std::function<void (const TcpConnectionPtr &)> HSHACallBack;
     
-    //class HshaServer;
-    
-    //typedef std::shared_ptr<HshaServer> HshaServerPtr;
-    
+    //HSHAServer
     class HshaServer
     {
     public:
-        HshaServer(EventLoop *loop,Ip4Addr &addr,int threads_nums):server_(TcpServerPtr(new TcpServer(loop,addr))),threads_nums_(threads_nums){}
+        HshaServer(EventLoop *loop,Ip4Addr &addr,int threads_nums):server_(TcpServerPtr(new TcpServer(loop,addr))),threadNum_(threads_nums){}
         
         void RunServer();
         
-        //设置回调函数
-        void SetReadCb(const HshaCallBack & cb){readcb_=cb;};
-        void SetWriteCb(const HshaCallBack & cb){writecb_=cb;};
+        //set call back function
+        void SetReadCb(const HSHACallBack & cb){readcb_=cb;};
+        void SetWriteCb(const HSHACallBack & cb){writecb_=cb;};
         
         
     private:
-        int threads_nums_;              //线程池中线程数量
+        int threadNum_;              //线程池中线程数量
         TcpServerPtr server_;
-        HshaCallBack readcb_,writecb_;
+        HSHACallBack readcb_,writecb_;
         
     };
 }

@@ -15,30 +15,34 @@ namespace luves {
     //TCP Server模块
     //用于新建TCP服务端
     //
+    TcpServer::~TcpServer()
+    {
+    
+    }
     void  TcpServer::Bind()
     {
-        bzero(&server_addr_, sizeof(server_addr_));
-        server_addr_.sin_family=AF_INET;
-        server_addr_.sin_addr.s_addr=inet_addr(addr_.GetHost().c_str());
-        server_addr_.sin_port=htons(addr_.GetPort());
+        bzero(&serverAddr_, sizeof(serverAddr_));
+        serverAddr_.sin_family=AF_INET;
+        serverAddr_.sin_addr.s_addr=inet_addr(addr_.GetHost().c_str());
+        serverAddr_.sin_port=htons(addr_.GetPort());
         
-        Socket::Bind(listen_fd_,this->GetServerAddrPointer());
+        Socket::Bind(listenFd_,this->GetServerAddrPointer());
     }
     
     void TcpServer::Listen()
     {
         listenning_=true;
-        Socket::Listen(listen_fd_);
+        Socket::Listen(listenFd_);
     }
     
     void TcpServer::RunServer()
     {
         this->Bind();
         this->Listen();
-        listen_channel_->SetEvent(EVFILT_READ);                 //设置监听事件类型
-        listen_channel_->SetReadCb([this]{HandleAccept();});    //设置监听回调
-        listen_channel_->SetIsListen(true);
-        loop_->AddChannel(listen_channel_);
+        listenChannel_->SetEvent(EVFILT_READ);                 //设置监听事件类型
+        listenChannel_->SetReadCb([this]{HandleAccept();});    //设置监听回调
+        listenChannel_->SetIsListen(true);
+        loop_->AddChannel(listenChannel_);
 
     }
     
@@ -47,7 +51,7 @@ namespace luves {
     {
         struct sockaddr_in client_addr;
         int accept_fd;
-        while((accept_fd=Socket::Accept(listen_channel_->GetFd(), &client_addr))>=0)
+        while((accept_fd=Socket::Accept(listenChannel_->GetFd(), &client_addr))>=0)
         {
             sockaddr_in local,peer;
             socklen_t len=sizeof(local);
@@ -55,7 +59,7 @@ namespace luves {
             ret=getsockname(accept_fd, (struct sockaddr*)&local, &len);
             if (ret<0)
             {
-                error("get local addr failed! %d %s",errno,strerror(errno));
+                ERROR_LOG("get local addr failed! %d %s",errno,strerror(errno));
                 continue;
             }
             ret=getpeername(accept_fd, (sockaddr*)&peer, &len);

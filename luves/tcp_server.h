@@ -24,55 +24,55 @@
 namespace luves {
     
     //
-    //Tcp服务器
+    //TcpServer
     //
     class TcpServer
     {
     public:
-        TcpServer(EventLoop *loop,Ip4Addr & addr):loop_(loop),addr_(addr),listen_fd_(Socket::CreateNonBlockSocket()),listenning_(false),host_(addr.GetHost()),port_(addr.GetPort())
+        TcpServer(EventLoop *loop,Ip4Addr & addr):loop_(loop),addr_(addr),listenFd_(Socket::CreateNonBlockSocket()),listenning_(false),host_(addr.GetHost()),port_(addr.GetPort())
             {
-                listen_channel_=new Channel(loop,listen_fd_);
-                SocketOp::SetReuseaddr(listen_fd_);
-                SocketOp::SetNonblock(listen_fd_);
+                listenChannel_=new Channel(loop,listenFd_);
+                SocketOp::SetReuseaddr(listenFd_);
+                SocketOp::SetNonblock(listenFd_);
 
             };
-        ~TcpServer(){};
+        ~TcpServer();
         
-        //Socket操作
         void Bind();
         void Listen();
         
-        //新建Tcp连接服务,设置CallBack函数
+    
         void NewConnection(int accept_fd,Ip4Addr local,Ip4Addr peer);
-        //处理TCP连接请求
+        
+        //handle accept connection
         void HandleAccept();
-        //设置回调函数
+        
         void SetReadCb(const TcpCallBack & cb){readcb_=cb;}
         void SetWriteCb(const TcpCallBack & cb){writecb_=cb;}
         void SetCloseCb(const TcpCallBack & cb){closecb_=cb;}
         
-        //启动Server
         void  RunServer();
         
-        struct sockaddr_in * GetServerAddrPointer(){return &server_addr_;}
+        struct sockaddr_in * GetServerAddrPointer(){return &serverAddr_;}
         
         EventLoop * GetLoop(){ return loop_;}
-        //设置HSHA模式
-        void SetHsha(bool hsha){is_hsha_=hsha;loop_->SetHsha(is_hsha_);}
         
-        std::map<int,TcpConnectionPtr> * GetTcpConnMap(){return &TcpConn_fd_map_;}
+        //set HSHA model
+        void SetHSHA(bool hsha){isHSHA_=hsha;loop_->SetHsha(isHSHA_);}
+        
+        std::map<int,TcpConnectionPtr> * GetTcpConnMap(){return &tcpConnectionFd_;}
     private:
         
-        std::map<int,TcpConnectionPtr> TcpConn_fd_map_;
-        bool is_hsha_  ;                        //是否为hsha模式
-        struct sockaddr_in server_addr_;
+        std::map<int,TcpConnectionPtr> tcpConnectionFd_;
+        bool isHSHA_  ;
+        struct sockaddr_in serverAddr_;
         std::string host_;
         short port_;
-        int listen_fd_;                         //监听套接字
-        bool listenning_;                       //监听状态
+        int listenFd_;
+        bool listenning_;
         Ip4Addr addr_;
         EventLoop * loop_;
-        Channel * listen_channel_;
+        Channel * listenChannel_;
         TcpCallBack readcb_,writecb_,closecb_;
     };
     

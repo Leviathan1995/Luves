@@ -63,7 +63,7 @@ namespace luves
     int Socket::CreateNonBlockSocket()
     {
         int socket_fd=socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-        fatalif(!socket_fd,"socket fd create failed!");
+        FATALIF_LOG(!socket_fd,"socket fd create failed!");
         return socket_fd;
     }
     
@@ -73,7 +73,7 @@ namespace luves
         if (ret)
         {
             close(fd);
-            error("bind to %s failed! %d %s",server_addr->sin_addr,errno,strerror(errno));
+            ERROR_LOG("bind to %s failed! %d %s",server_addr->sin_addr,errno,strerror(errno));
             return ret;
         }
         return 0;
@@ -82,7 +82,7 @@ namespace luves
     void Socket::Listen(int fd)
     {
         int ret=listen(fd, 20);
-        fatalif(ret,"listen to %d failed! %d %s",errno,strerror(errno));
+        FATALIF_LOG(ret,"listen to %d failed! %d %s",errno,strerror(errno));
     }
     
     int Socket::Accept(int fd,sockaddr_in * client_addr)
@@ -90,7 +90,7 @@ namespace luves
         socklen_t client_len=sizeof(*client_addr);
         int accept_fd=accept(fd, (struct sockaddr *)client_addr,&client_len);
         if(accept_fd==-1 & errno!=EAGAIN)
-            error("accept to %d failed! %d %s",fd,errno,strerror(errno));
+            ERROR_LOG("accept to %d failed! %d %s",fd,errno,strerror(errno));
         return accept_fd;
     }
     
