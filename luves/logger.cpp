@@ -48,7 +48,6 @@ namespace luves
         }
         else
         {
-            int e=dup2(fd, fd_);
             close(fd);
         }
         

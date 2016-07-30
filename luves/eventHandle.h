@@ -114,7 +114,7 @@ namespace luves {
     };
     
     //
-    //IO复用模型
+    //Event Model
     //
     typedef std::vector<Channel *> ChannelList;
     typedef std::map<int ,Channel*> ChannelMap;
@@ -142,13 +142,15 @@ namespace luves {
                 
         ChannelList  & GetTriggerPtr();
         
-        void SetHsha(bool hsha){is_hsha_=hsha;}
+        void SetHsha(bool hsha){isHSHA_=hsha;}
+        void SetLF(bool lf){isLF_=lf;}
         
         //传递线程池指针
         //void PassPoolPtr(ThreadsPool *  pool){pool_=pool;}
     private:
         //ThreadsPool * pool_;
-        bool is_hsha_;
+        bool isHSHA_;
+        bool isLF_;
         int monitor_nums_;                  //监听的事件总数
         struct kevent monitor_events[1024];
         struct kevent trigger_events[1024];

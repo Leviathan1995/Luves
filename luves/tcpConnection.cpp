@@ -6,7 +6,7 @@
 //  Copyright © 2016年 leviathan. All rights reserved.
 //
 
-#include "tcp_connection.h"
+#include "tcpConnection.h"
 
 namespace luves {
     
@@ -22,7 +22,7 @@ namespace luves {
         channel_=new Channel(loop_,fd);
         channel_->SetEvent(EVFILT_READ|EVFILT_WRITE);
         loop_->AddChannel(channel_);
-        trace(" TCP服务创建成功:%s--%s:%d",local.ToString().c_str(),peer.ToString().c_str(),fd);
+        TRACE_LOG(" TCP服务创建成功:%s--%s:%d",local.ToString().c_str(),peer.ToString().c_str(),fd);
 
         TcpConnectionPtr connection=shared_from_this();
         

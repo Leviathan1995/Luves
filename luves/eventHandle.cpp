@@ -6,12 +6,12 @@
 //  Copyright © 2016年 leviathan. All rights reserved.
 //
 
-#include "event_handle.h"
+#include "eventHandle.h"
 #include "threads.h"
 namespace luves {
     
     //
-    //事件循环
+    //Event loop
     //
     EventLoop::EventLoop()
     {
@@ -159,21 +159,21 @@ namespace luves {
         {
             if (trigger_events[i].flags & EV_ERROR)
             {
-                fatal("kqueue return error %d %s",errno,strerror(errno)); //kqueue error
+                ERROR_LOG("kqueue return error %d %s",errno,strerror(errno)); //kqueue error
             }
-            
-            else if ((trigger_events[i].ident==listen_fd_ )||((trigger_events[i].flags & EVFILT_READ)&& is_hsha_==false))       //normal mode or connnect coming
+            else if ((trigger_events[i].ident==listen_fd_ )||((trigger_events[i].flags & EVFILT_READ)&& isHSHA_==false))       //default or connnect coming
             {
                 auto event=&trigger_events[i];
                 auto channel=channel_fd_map_.find(int(event->ident))->second;
                 channel->SetActiveEvent(event->flags);
                 trigger_channel_list_.push_back(channel_fd_map_.find(int(event->ident))->second);
             }
-            
-            else if (trigger_events[i].flags & EVFILT_READ)  //hsha mode
+            else if (trigger_events[i].flags & EVFILT_READ &&isHSHA_)  //HSHA
             {
                 ThreadsPool::AddTask(int(trigger_events[i].ident));
             }
+            
+            
         }
     }
     

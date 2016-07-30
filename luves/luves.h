@@ -9,8 +9,8 @@
 #ifndef LUVES_H_
 #define LUVES_H_
 
-#include "tcp_server.h"
+#include "tcpServer.h"
 #include "logger.h"
-#include "hsha_server.h"
+#include "HSHAServer.h"
 
 #endif /* luves_h_ */

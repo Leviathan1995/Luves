@@ -6,7 +6,7 @@
 //  Copyright © 2016年 leviathan. All rights reserved.
 //
 
-#include "tcp_server.h"
+#include "tcpServer.h"
 
 namespace luves {
     
@@ -17,13 +17,13 @@ namespace luves {
     //
     TcpServer::~TcpServer()
     {
-    
+        delete listenChannel_;
     }
     void  TcpServer::Bind()
     {
         bzero(&serverAddr_, sizeof(serverAddr_));
         serverAddr_.sin_family=AF_INET;
-        serverAddr_.sin_addr.s_addr=inet_addr(addr_.GetHost().c_str());
+        serverAddr_.sin_addr.s_addr=inet_addr(addr_.GetIp().c_str());
         serverAddr_.sin_port=htons(addr_.GetPort());
         
         Socket::Bind(listenFd_,this->GetServerAddrPointer());
@@ -39,8 +39,8 @@ namespace luves {
     {
         this->Bind();
         this->Listen();
-        listenChannel_->SetEvent(EVFILT_READ);                 //设置监听事件类型
-        listenChannel_->SetReadCb([this]{HandleAccept();});    //设置监听回调
+        listenChannel_->SetEvent(EVFILT_READ);
+        listenChannel_->SetReadCb([this]{HandleAccept();});    
         listenChannel_->SetIsListen(true);
         loop_->AddChannel(listenChannel_);
 
@@ -65,16 +65,15 @@ namespace luves {
             ret=getpeername(accept_fd, (sockaddr*)&peer, &len);
             if (ret<0)
             {
-                error("get peer addr failed! %d %s",errno,strerror(errno));
+                ERROR_LOG("get peer addr failed! %d %s",errno,strerror(errno));
                 continue;
             }
             Ip4Addr local_addr(local),peer_addr(peer);
-            this->NewConnection(accept_fd,local_addr,peer_addr);   //新建Tcp服务,并注册CallBack函数
+            this->NewConnection(accept_fd,local_addr,peer_addr);
         }
 
     }
     
-    //新建Tcp服务,并注册CallBack函数
     void TcpServer::NewConnection(int accept_fd,Ip4Addr local,Ip4Addr peer)
     {
         TcpConnectionPtr connection=TcpConnectionPtr(new TcpConnection(loop_));
@@ -86,9 +85,7 @@ namespace luves {
             connection->SetCloseCb(closecb_);
         
         connection->Register(loop_, accept_fd,local,peer);
-        
-        TcpConn_fd_map_[accept_fd]=connection;    //添加Tcp连接与accept套接字至映射队列
-        
+        tcpConnectionFd_[accept_fd]=connection;    //添加Tcp连接与accept套接字至映射队列        
     }
     
     //

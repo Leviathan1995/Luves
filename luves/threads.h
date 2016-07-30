@@ -14,7 +14,7 @@
 #include <vector>
 #include <map>
 
-#include "tcp_connection.h"
+#include "tcpConnection.h"
 
 namespace luves
 {
@@ -36,10 +36,10 @@ namespace luves
         
         static void AddTask(int accept_fd)
         {
-            pthread_mutex_lock(&vector_mutex);
-            accpet_list_.push_back(accept_fd);
-            pthread_mutex_unlock(&vector_mutex);
-            pthread_cond_signal(&pthread_cond);
+            pthread_mutex_lock(&acceptMutex_);
+            accpetVec_.push_back(accept_fd);
+            pthread_mutex_unlock(&acceptMutex_);
+            pthread_cond_signal(&pthreadCond_);
         };
         
         void CreatePool();
@@ -49,9 +49,9 @@ namespace luves
         //static void SetReadCb(std::function<void (const TcpConnPtr &)> & cb){readcb_=cb;}
         //static void SetWriteCb(std::function<void (const TcpConnPtr &)> & cb){writecb_=cb;}
         
-        static void SetTcpConnectionFdMapPtr(std::map<int,TcpConnectionPtr> * Tcpconnection_fd_map){Tcpconnection_fd_map_= Tcpconnection_fd_map_;}
+        static void SetTcpConnectionFdPtr(std::map<int,TcpConnectionPtr> * Tcpconnection_fd_map){tcpConnectionFd_= Tcpconnection_fd_map;}
         
-        static void SetThreadsNum(int threads_num){threads_num_=threads_num;}
+        static void SetThreadsNum(int threadNum){threadNum_=threadNum;}
         
         static TcpConnectionPtr  GetTcpConnectionPtr(int fd);
     private:
@@ -60,14 +60,17 @@ namespace luves
         ThreadsPool & operator=(ThreadsPool const &);
         ThreadsPool(ThreadsPool const &);
         
-        static std::map<int,TcpConnectionPtr>  * Tcpconnection_fd_map_;
-        static std::vector<int > accpet_list_;                                  //任务队列,存放accept套接字
-        static int threads_num_;
-        pthread_t * pthread_id_;
+        bool isHSHA_;
+        bool isLF_;
         
-        static pthread_mutex_t pthread_mutex;
-        static pthread_mutex_t vector_mutex;                                    //任务队列锁
-        static pthread_cond_t pthread_cond;
+        static std::map<int,TcpConnectionPtr>  * tcpConnectionFd_;
+        static std::vector<int > accpetVec_;                                  //accept socket
+        static int threadNum_;
+        pthread_t * pthreadId_;
+        
+        static pthread_mutex_t pthreadMutex_;
+        static pthread_mutex_t acceptMutex_;
+        static pthread_cond_t pthreadCond_;
         static std::function<void (const TcpConnectionPtr &)> readcb_,writecb_;
     };
 }

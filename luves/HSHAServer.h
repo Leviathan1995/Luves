@@ -11,9 +11,9 @@
 
 #include <functional>
 
-#include "tcp_server.h"
+#include "tcpServer.h"
 #include "threads.h"
-#include "event_handle.h"
+#include "eventHandle.h"
 #include "net.h"
 
 namespace luves
@@ -26,10 +26,10 @@ namespace luves
     typedef std::function<void (const TcpConnectionPtr &)> HSHACallBack;
     
     //HSHAServer
-    class HshaServer
+    class HSHAServer
     {
     public:
-        HshaServer(EventLoop *loop,Ip4Addr &addr,int threads_nums):server_(TcpServerPtr(new TcpServer(loop,addr))),threadNum_(threads_nums){}
+        HSHAServer(EventLoop *loop,Ip4Addr &addr,int threads_nums):server_(TcpServerPtr(new TcpServer(loop,addr))),threadNum_(threads_nums){}
         
         void RunServer();
         

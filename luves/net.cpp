@@ -70,10 +70,10 @@ namespace luves
     int Socket::Bind(int fd,sockaddr_in * server_addr)
     {
         int ret =bind(fd,(struct sockaddr *)server_addr,sizeof(*server_addr));
-        if (ret)
+        if (ret==-1)
         {
             close(fd);
-            ERROR_LOG("bind to %s failed! %d %s",server_addr->sin_addr,errno,strerror(errno));
+            ERROR_LOG("bind to %d failed! %d %s",fd,errno,strerror(errno));
             return ret;
         }
         return 0;
@@ -82,7 +82,10 @@ namespace luves
     void Socket::Listen(int fd)
     {
         int ret=listen(fd, 20);
-        FATALIF_LOG(ret,"listen to %d failed! %d %s",errno,strerror(errno));
+        if (ret==-1)
+        {
+            FATALIF_LOG(ret,"listen to %d failed! %d %s",errno,strerror(errno));
+        }
     }
     
     int Socket::Accept(int fd,sockaddr_in * client_addr)

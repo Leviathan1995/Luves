@@ -17,9 +17,8 @@
 #include <fcntl.h>
 #include <arpa/inet.h>
 
-#include "tcp_connection.h"
+#include "tcpConnection.h"
 
-//#include "threads.h"
 
 namespace luves {
     
@@ -29,11 +28,11 @@ namespace luves {
     class TcpServer
     {
     public:
-        TcpServer(EventLoop *loop,Ip4Addr & addr):loop_(loop),addr_(addr),listenFd_(Socket::CreateNonBlockSocket()),listenning_(false),host_(addr.GetHost()),port_(addr.GetPort())
+        TcpServer(EventLoop *loop,Ip4Addr & addr):loop_(loop),addr_(addr),listenFd_(Socket::CreateNonBlockSocket()),listenning_(false),ip_(addr.GetIp()),port_(addr.GetPort())
             {
-                listenChannel_=new Channel(loop,listenFd_);
                 SocketOp::SetReuseaddr(listenFd_);
                 SocketOp::SetNonblock(listenFd_);
+                listenChannel_=new Channel(loop,listenFd_);
 
             };
         ~TcpServer();
@@ -59,14 +58,15 @@ namespace luves {
         
         //set HSHA model
         void SetHSHA(bool hsha){isHSHA_=hsha;loop_->SetHsha(isHSHA_);}
-        
+        void SetLF(bool lf){isHF_=lf;}
         std::map<int,TcpConnectionPtr> * GetTcpConnMap(){return &tcpConnectionFd_;}
     private:
         
         std::map<int,TcpConnectionPtr> tcpConnectionFd_;
         bool isHSHA_  ;
+        bool isHF_;
         struct sockaddr_in serverAddr_;
-        std::string host_;
+        std::string ip_;
         short port_;
         int listenFd_;
         bool listenning_;

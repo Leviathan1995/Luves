@@ -20,7 +20,7 @@
 
 namespace luves {
     
-    //Socket属性操作
+    //Socket operation
     class SocketOp
     {
     public:
@@ -30,23 +30,23 @@ namespace luves {
     };
     
     //
-    //Ipv4 地址
+    //Ipv4
     //
     class Ip4Addr
     {
     public:
-        Ip4Addr(const std::string & host,int port):
-            host_(host),port_(port){};
+        Ip4Addr(const std::string & ip,int port):
+            ip_(ip),port_(port){};
         Ip4Addr(const sockaddr_in & addr):addr_(addr){};
         
         //get data
         short GetPort(){return port_;}
-        std::string GetHost(){return host_;}
+        std::string GetIp(){return ip_;}
         
         std::string ToString();
     private:
         sockaddr_in addr_;
-        std::string host_;
+        std::string ip_;
         short port_;
     };
     

@@ -11,34 +11,34 @@
 namespace luves
 {
     
-    std::vector<int > ThreadsPool::accpet_list_;
-    std::map<int,TcpConnectionPtr>  * ThreadsPool::Tcpconnection_fd_map_;
-    pthread_mutex_t ThreadsPool::pthread_mutex=PTHREAD_MUTEX_INITIALIZER;
-    pthread_mutex_t ThreadsPool::vector_mutex=PTHREAD_MUTEX_INITIALIZER;
-    pthread_cond_t ThreadsPool::pthread_cond=PTHREAD_COND_INITIALIZER;
+    std::vector<int > ThreadsPool::accpetVec_;
+    std::map<int,TcpConnectionPtr>  * ThreadsPool::tcpConnectionFd_;
+    pthread_mutex_t ThreadsPool::pthreadMutex_=PTHREAD_MUTEX_INITIALIZER;
+    pthread_mutex_t ThreadsPool::acceptMutex_=PTHREAD_MUTEX_INITIALIZER;
+    pthread_cond_t ThreadsPool::pthreadCond_=PTHREAD_COND_INITIALIZER;
     
     std::function<void (const TcpConnectionPtr &)> ThreadsPool::readcb_;
     std::function<void (const TcpConnectionPtr &)> ThreadsPool::writecb_;
     
-    int ThreadsPool::threads_num_;
+    int ThreadsPool::threadNum_;
     
     ThreadsPool::~ThreadsPool()
     {
-        delete [] pthread_id_;
+        delete [] pthreadId_;
         
     }
     
     //创建线程池
     void ThreadsPool::CreatePool()
     {
-        pthread_id_ =new pthread_t[threads_num_];
-        for (int i=0;i<threads_num_; i++)
-            pthread_create(&pthread_id_[i], NULL, ThreadCallBack, NULL);
+        pthreadId_ =new pthread_t[threadNum_];
+        for (int i=0;i<threadNum_; i++)
+            pthread_create(&pthreadId_[i], NULL, ThreadCallBack, NULL);
     }
     
     TcpConnectionPtr ThreadsPool::GetTcpConnectionPtr(int fd)
     {
-        return Tcpconnection_fd_map_->find(fd)->second;
+        return tcpConnectionFd_->find(fd)->second;
     }
     
     void * ThreadsPool::ThreadCallBack(void *data)
@@ -46,24 +46,24 @@ namespace luves
         int fd;
         while (1)
         {
-            pthread_mutex_lock(&pthread_mutex);
-            while (accpet_list_.size()==0)
-                pthread_cond_wait(&pthread_cond,&pthread_mutex);
+            pthread_mutex_lock(&pthreadMutex_);
+            while (accpetVec_.size()==0)
+                pthread_cond_wait(&pthreadCond_,&pthreadMutex_);
             
             //获取accept套接字
-            pthread_mutex_lock(&vector_mutex);
-            auto fd_ptr=accpet_list_.begin();
+            pthread_mutex_lock(&acceptMutex_);
+            auto fd_ptr=accpetVec_.begin();
             fd=*fd_ptr;
-            if (fd_ptr!=accpet_list_.end())
-                accpet_list_.erase(fd_ptr);
-            pthread_mutex_unlock(&vector_mutex);
+            if (fd_ptr!=accpetVec_.end())
+                accpetVec_.erase(fd_ptr);
+            pthread_mutex_unlock(&acceptMutex_);
         
-            pthread_mutex_unlock(&pthread_mutex);
+            pthread_mutex_unlock(&pthreadMutex_);
 
             //进行回调
-            if (Tcpconnection_fd_map_)
+            if (tcpConnectionFd_)
             {
-                auto tcpconnnection=Tcpconnection_fd_map_->find(fd)->second;
+                auto tcpconnnection=tcpConnectionFd_->find(fd)->second;
                 tcpconnnection->HandleRead(tcpconnnection);
                 tcpconnnection->HandleWrite(tcpconnnection);
             }
