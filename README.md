@@ -19,7 +19,6 @@ Luves是一个轻量级的事件触发网络库,封装了Socket,简化基于Sock
 
 ##<a id="title01"/> 安装
 
-	make install
 
 
 
