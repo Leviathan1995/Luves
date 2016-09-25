@@ -6,7 +6,7 @@
 //  Copyright © 2016年 leviathan. All rights reserved.
 //
 
-#include "HSHAServer.h"
+#include "hshaserver.h"
 
 namespace luves
 {

@@ -17,7 +17,7 @@
 #include <fcntl.h>
 #include <arpa/inet.h>
 
-#include "tcpConnection.h"
+#include "tcpconnection.h"
 
 
 namespace luves {
