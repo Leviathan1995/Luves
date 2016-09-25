@@ -1,4 +1,5 @@
 CC=g++
+
 CFLAGS=-std=c++11 -fPIC -c
 DFLAGS=-std=c++11 -shared
 LIBLUVES=libluves.so
@@ -8,7 +9,6 @@ OBJ=$(SOURCES:%.cpp=%.o)
 PREFIX=luves
 
 build:$(LIBLUVES)
-	echo "hello world"
 	rm $(PREFIX)/*.o
 
 $(LIBLUVES):$(OBJ)
@@ -19,4 +19,4 @@ $(PREFIX)/%.o: $(PREFIX)/%.cpp $(PREFIX)/%.h
 	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-	rm $(PREFIX)/*.o
+	rm $(LIBLUVES)
