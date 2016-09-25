@@ -6,15 +6,14 @@ LIBLUVES=libluves.a
 SOURCES=$(shell find luves -name "*.cpp")
 HEADERS=$(shell find luves -name "*.h")
 OBJ=$(SOURCES:%.cpp=%.o)
-SRCPATH=luves/
 
 build:$(LIBLUVES)
-	echo "hello"
+	echo "hello world"
 
 $(LIBLUVES):$(OBJ)
-	AR -rs $@ $<
+	AR -crv $@ $(OBJ)
 
-$(SRCPATH)%.o:$(SRCPATH)%.cpp $(SRCPATH)%.h
+$(OBJ):$(SOURCES) $(HEADERS)
 	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
