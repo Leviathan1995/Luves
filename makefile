@@ -5,16 +5,18 @@ LIBLUVES=libluves.so
 
 SOURCES=$(shell find luves -name "*.cpp")
 OBJ=$(SOURCES:%.cpp=%.o)
+PREFIX=luves
 
 build:$(LIBLUVES)
 	echo "hello world"
+	rm $(PREFIX)/*.o
 
 $(LIBLUVES):$(OBJ)
 	$(CC) $(DFLAGS) -o $@ $(OBJ)
 
 
-luves/%.o: luves/%.cpp luves/%.h
+$(PREFIX)/%.o: $(PREFIX)/%.cpp $(PREFIX)/%.h
 	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-	rm -fr *.o
+	rm $(PREFIX)/*.o
