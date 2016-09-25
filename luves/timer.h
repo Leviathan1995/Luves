@@ -10,12 +10,13 @@
 #define TIMER_H_
 
 #include <chrono>
+#include <atomic>
 #include <map>
 
 
 namespace luves
 {
-    
+
     typedef std::pair<int64_t, int64_t> TimerId;
     typedef std::function<void ()> TimerTask;
 
@@ -29,7 +30,7 @@ namespace luves
         TimerId timerid;   //原始TIMEID,不会改变
         TimerTask taskfunc;
     };
-    
+
     //
     //定时事件模块
     //
@@ -38,8 +39,8 @@ namespace luves
     public:
         Timer();
         ~Timer(){};
-        
-       
+
+
         //添加定时事件
         TimerId startTimer(int64_t delaytime,const TimerTask & task,int64_t interval=0);
         //处理超时任务
@@ -50,7 +51,7 @@ namespace luves
         void UpdateRepeatEvent(TimerRepeat * tr);
         //取消定时事件
         bool stopTimer(TimerId timerid);
-        
+
         //获取系统时间,精度是millisecond
         static int64_t GetSystemTick()
             {
@@ -62,9 +63,9 @@ namespace luves
             }
         //获取系统时间,精度是second
         static int64_t timeSec();
-        
+
         int64_t Getnexttimeout(){return nexttimeout_;}
-        
+
     private:
         int64_t nexttimeout_;     //下一个定时事件的超时时间
         std::atomic<int64_t> timerPL_;  //定时事件唯一ID

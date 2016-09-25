@@ -19,13 +19,13 @@ namespace luves
         "DEBUG",
         "TRACE"
     };
-    
+
     Logger::Logger(): level_(LINFO),mode_(TERMIANAL)
     {
         fd_=-1;
         level_=LWARN;
     }
-    
+
     Logger::~Logger()
     {
         if (fd_!=-1)
@@ -33,7 +33,7 @@ namespace luves
             close(fd_);
         }
     }
-    
+
     void Logger::SetFileName(const std::string & filename)
     {
         int fd=open(filename.c_str(), O_APPEND|O_CREAT|O_WRONLY|O_CLOEXEC);
@@ -50,27 +50,27 @@ namespace luves
         {
             close(fd);
         }
-        
-        
+
+
     }
-    
+
     void Logger::PrintLog(int level, const char* file, int line, const char* func, const char * pram, ...)
     {
         if (level>level_)
         {
             return;
         }
-        
+
         struct timeval now_tv;
         gettimeofday(&now_tv,NULL); //得到当前时间
         const time_t seconds=now_tv.tv_sec;
         struct tm t;
         localtime_r(&seconds, &t);  //返回当地时间
-        
+
         char *buffer=new char[4*1024];
         char* p = buffer;
         //char* limit = buffer + sizeof(buffer);
-        
+
         p+= snprintf(p,4*1024,
                       "%04d/%02d/%02d-%02d:%02d:%02d.%06d %lu %s %s:%d %s%s",
                       t.tm_year + 1900,
@@ -80,7 +80,7 @@ namespace luves
                       t.tm_min,
                       t.tm_sec,
                       static_cast<int>(now_tv.tv_usec),
-                      pthread_self(),
+                      long(pthread_self()),
                       strlevel[level].c_str(),
                       file,
                       line,
@@ -92,7 +92,7 @@ namespace luves
         va_start(pvar,pram);
         p += vsnprintf(p,4*1024,pram,pvar);
         va_end(pvar);
-        
+
         if (mode_==FILE)
             write(fd_, buffer, 1);
         else if(mode_==TERMIANAL)
