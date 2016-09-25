@@ -42,7 +42,7 @@ namespace luves
 
 
         //添加定时事件
-        TimerId startTimer(int64_t delaytime,const TimerTask & task,int64_t interval=0);
+        TimerId StartTimer(int64_t delaytime,const TimerTask & task,int64_t interval=0);
         //处理超时任务
         void HandleTimeoutEvent();
         //更新下一个的最小等待时间
@@ -50,7 +50,7 @@ namespace luves
         //更新重复的定时事件
         void UpdateRepeatEvent(TimerRepeat * tr);
         //取消定时事件
-        bool stopTimer(TimerId timerid);
+        bool StopTimer(TimerId timerid);
 
         //获取系统时间,精度是millisecond
         static int64_t GetSystemTick()
@@ -62,9 +62,9 @@ namespace luves
                 return (int64_t)std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
             }
         //获取系统时间,精度是second
-        static int64_t timeSec();
+        static int64_t GetTimeSecond();
 
-        int64_t Getnexttimeout(){return nexttimeout_;}
+        int64_t GetNextTimeout(){return nexttimeout_;}
 
     private:
         int64_t nexttimeout_;     //下一个定时事件的超时时间

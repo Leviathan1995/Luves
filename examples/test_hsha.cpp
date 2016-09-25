@@ -10,7 +10,7 @@
 
 using namespace luves;
 
-void GetInput(const TcpConnPtr & conn)
+void GetInput(const TcpConnectionPtr & conn)
 {
     std::cout<<conn->GetInputBuffer();
 }
@@ -24,7 +24,7 @@ int main()
     HshaServer server(&loop, server_addr,4);
     server.SetReadCb(GetInput);
     
-    server.SetWriteCb([](const TcpConnPtr & conn)
+    server.SetWriteCb([](const TcpConnectionPtr & conn)
                       {conn->Send("HTTP/1.1 200 OK\r\n"
                                   "Content-Type:text/html;charset=utf-8\r\n"
                                   "Content-Length:18\r\n"
@@ -34,5 +34,3 @@ int main()
     server.RunServer();
     loop.loop();
 }
-
-//*/

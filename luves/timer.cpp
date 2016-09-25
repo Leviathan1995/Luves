@@ -13,17 +13,17 @@ namespace luves
     //
     //定时事件模块
     //
-    
+
     Timer::Timer()
     {
         timerPL_=0;
         nexttimeout_=10;
     }
-    
+
     //处理超时时间
     void Timer::HandleTimeoutEvent()
     {
-        int64_t now=Timer::timeSec();
+        int64_t now=Timer::GetTimeSecond();
         while (timertasks_.size()&&timertasks_.begin()->first.first<=now)
         {
             TimerTask task=timertasks_.begin()->second;
@@ -31,8 +31,8 @@ namespace luves
             task();
         }
     }
-    
-    TimerId Timer::startTimer(int64_t delaytime,const TimerTask & task,int64_t interval)
+
+    TimerId Timer::StartTimer(int64_t delaytime,const TimerTask & task,int64_t interval)
     {
         if (interval) //重复任务
         {
@@ -44,7 +44,7 @@ namespace luves
             tr->timerid=tid;
             tr->taskfunc=task;
             timer_repeat_tasks_[tid]=*tr;
-            
+
             timertasks_[tr->timerid]=[this,tr]{UpdateRepeatEvent(tr);};
             UpdateNextTimeout();
             return tr->timerid;
@@ -57,7 +57,7 @@ namespace luves
             return tid;
         }
     }
-    
+
     /*
      定时事件存储在两个map中,一个是timertasks_,重复定时事件增加一个副本存放在timer_repeat_tasks_,
      timertasks_: key为timeid,value为回调函数
@@ -72,12 +72,12 @@ namespace luves
         tr->at+=tr->interval;
         TimerId tid {tr->at,timerPL_};
         timertasks_[tid]=[this,tr]{UpdateRepeatEvent(tr);};
-        
+
         UpdateNextTimeout();
-        
+
         tr->taskfunc();
     }
-    
+
     //更新下一个的最小等待时间
     void Timer::UpdateNextTimeout()
     {
@@ -92,12 +92,12 @@ namespace luves
             nexttimeout_=nexttimeout_< 0 ? 0 : nexttimeout_;
         }
     }
-    
+
     //取消定时事件
-    bool Timer::stopTimer(TimerId timeid)
+    bool Timer::StopTimer(TimerId timeid)
     {
         auto er=timer_repeat_tasks_.find(timeid);
-        
+
         if (er==timer_repeat_tasks_.end())//非重复事件
         {
             auto e=timertasks_.find(timeid);
@@ -120,9 +120,9 @@ namespace luves
         }
         return false;
     }
-    
+
     //精度为秒
-    int64_t Timer::timeSec()
+    int64_t Timer::GetTimeSecond()
     {
         std::chrono::time_point<std::chrono::system_clock> p = std::chrono::system_clock::now();
         int64_t now=std::chrono::duration_cast<std::chrono::seconds>(p.time_since_epoch()).count();
