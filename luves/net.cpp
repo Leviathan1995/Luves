@@ -57,7 +57,7 @@ namespace luves
     
     void Socket::Close(int fd)
     {
-        Close(fd);
+        close(fd);
     }
     
     int Socket::CreateNonBlockSocket()

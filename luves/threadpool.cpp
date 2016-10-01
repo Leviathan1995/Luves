@@ -6,7 +6,7 @@
 //  Copyright © 2016年 leviathan. All rights reserved.
 //
 
-#include "threads.h"
+#include "threadpool.h"
 
 namespace luves
 {
@@ -20,7 +20,7 @@ namespace luves
     std::function<void (const TcpConnectionPtr &)> ThreadsPool::readcb_;
     std::function<void (const TcpConnectionPtr &)> ThreadsPool::writecb_;
     
-    int ThreadsPool::threadNum_;
+    int ThreadsPool::thread_num_;
     
     ThreadsPool::~ThreadsPool()
     {
@@ -31,8 +31,8 @@ namespace luves
     //创建线程池
     void ThreadsPool::CreatePool()
     {
-        pthreadId_ =new pthread_t[threadNum_];
-        for (int i=0;i<threadNum_; i++)
+        pthreadId_ =new pthread_t[thread_num_];
+        for (int i=0;i<thread_num_; i++)
             pthread_create(&pthreadId_[i], NULL, ThreadCallBack, NULL);
     }
     

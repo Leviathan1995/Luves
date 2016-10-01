@@ -5,7 +5,8 @@
 //  Created by leviathan on 16/6/11.
 //  Copyright © 2016年 leviathan. All rights reserved.
 //
- 
+
+/*
 #include "luves.h"
 
 using namespace luves;
@@ -29,3 +30,4 @@ int main()
     loop.loop();
     
 }
+*/

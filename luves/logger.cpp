@@ -72,14 +72,13 @@ namespace luves
         //char* limit = buffer + sizeof(buffer);
 
         p+= snprintf(p,4*1024,
-                      "%04d/%02d/%02d-%02d:%02d:%02d.%06d %lu %s %s:%d %s%s",
+                      "%04d/%02d/%02d-%02d:%02d:%02d-%lu[%s]:-%s:%d-%s%s-",
                       t.tm_year + 1900,
                       t.tm_mon + 1,
                       t.tm_mday,
                       t.tm_hour,
                       t.tm_min,
                       t.tm_sec,
-                      static_cast<int>(now_tv.tv_usec),
                       long(pthread_self()),
                       strlevel[level].c_str(),
                       file,

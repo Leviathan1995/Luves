@@ -6,8 +6,10 @@
 //  Copyright © 2016年 leviathan. All rights reserved.
 //
 
+/*
 #include <stdio.h>
 #include "luves.h"
+
 using namespace luves;
 
 int main()
@@ -20,3 +22,4 @@ int main()
     fatalif(-1,"-1");
     fatalif(0,"0");
 }
+*/

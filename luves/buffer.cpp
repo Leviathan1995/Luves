@@ -29,13 +29,13 @@ namespace luves {
     int Buffer::ReadImp(int fd)
     {
         buffer_.resize(1024);
-        int n=read(fd,&buffer_[0],1024);
+        int n=int(read(fd,&buffer_[0],1024));
         return n;
     }
 
     int Buffer::WriteImp(int fd)
     {
-        int n=write(fd,buffer_.data(),Capcity());
+        int n=int(write(fd,buffer_.data(),Capcity()));
         return n;
     }
 

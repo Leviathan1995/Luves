@@ -19,7 +19,6 @@
 
 #include "tcpconnection.h"
 
-
 namespace luves {
     
     //
@@ -32,10 +31,10 @@ namespace luves {
             {
                 SocketOp::SetReuseaddr(listenFd_);
                 SocketOp::SetNonblock(listenFd_);
-                listenChannel_=new Channel(loop,listenFd_);
+                listen_channel_=new Channel(loop,listenFd_);
 
             };
-        ~TcpServer();
+        virtual ~TcpServer();
         
         void Bind();
         void Listen();
@@ -43,28 +42,23 @@ namespace luves {
     
         void NewConnection(int accept_fd,Ip4Addr local,Ip4Addr peer);
         
-        //handle accept connection
         void HandleAccept();
         
-        void SetReadCb(const TcpCallBack & cb){readcb_=cb;}
-        void SetWriteCb(const TcpCallBack & cb){writecb_=cb;}
-        void SetCloseCb(const TcpCallBack & cb){closecb_=cb;}
+        void SetReadCb(const TcpCallBack & read_cb){read_cb_ = read_cb;}
+        void SetWriteCb(const TcpCallBack & write_cb){write_cb_ = write_cb;}
+        void SetCloseCb(const TcpCallBack & close_cb){close_cb_ = close_cb;}
         
         void  RunServer();
         
         struct sockaddr_in * GetServerAddrPointer(){return &serverAddr_;}
         
         EventLoop * GetLoop(){ return loop_;}
-        
-        //set HSHA model
-        void SetHSHA(bool hsha){isHSHA_=hsha;loop_->SetHsha(isHSHA_);}
-        void SetLF(bool lf){isHF_=lf;}
-        std::map<int,TcpConnectionPtr> * GetTcpConnMap(){return &tcpConnectionFd_;}
+  
+        std::map<int,TcpConnectionPtr> * GetTcpConnMap(){return &tcp_connection_fd_;}
     private:
         
-        std::map<int,TcpConnectionPtr> tcpConnectionFd_;
-        bool isHSHA_  ;
-        bool isHF_;
+        std::map<int,TcpConnectionPtr> tcp_connection_fd_;
+
         struct sockaddr_in serverAddr_;
         std::string ip_;
         short port_;
@@ -72,8 +66,8 @@ namespace luves {
         bool listenning_;
         Ip4Addr addr_;
         EventLoop * loop_;
-        Channel * listenChannel_;
-        TcpCallBack readcb_,writecb_,closecb_;
+        Channel * listen_channel_;
+        TcpCallBack read_cb_,write_cb_,close_cb_;
     };
     
     //
@@ -83,7 +77,7 @@ namespace luves {
     {
     public:
         TcpClient(EventLoop *loop,Ip4Addr & server_addr):loop_(loop),server_addr_(server_addr),client_fd_(Socket::CreateNonBlockSocket()){};
-        ~TcpClient(){};
+        virtual ~TcpClient(){};
         
         void Bind();
         void HandleConnect();

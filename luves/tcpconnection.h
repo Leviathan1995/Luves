@@ -20,6 +20,7 @@
 namespace luves {
     
     class TcpConnection;
+    class EventLoop;
     
     typedef std::shared_ptr<TcpConnection> TcpConnectionPtr;
     typedef std::function<void (const TcpConnectionPtr &)> TcpCallBack;

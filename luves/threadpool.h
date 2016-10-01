@@ -18,6 +18,10 @@
 
 namespace luves
 {
+ 
+    class TcpConnection;
+    typedef std::shared_ptr<TcpConnection> TcpConnectionPtr;
+    typedef std::function<void (const TcpConnectionPtr &)> TcpCallBack;
     //
     //
     //线程池模块
@@ -46,12 +50,12 @@ namespace luves
         
         static void * ThreadCallBack(void * data);     //pthread_create()回调函数
         
-        //static void SetReadCb(std::function<void (const TcpConnPtr &)> & cb){readcb_=cb;}
-        //static void SetWriteCb(std::function<void (const TcpConnPtr &)> & cb){writecb_=cb;}
+        static void SetReadCb(std::function<void (const TcpConnectionPtr &)> & cb){readcb_=cb;}
+        static void SetWriteCb(std::function<void (const TcpConnectionPtr &)> & cb){writecb_=cb;}
         
         static void SetTcpConnectionFdPtr(std::map<int,TcpConnectionPtr> * Tcpconnection_fd_map){tcpConnectionFd_= Tcpconnection_fd_map;}
         
-        static void SetThreadsNum(int threadNum){threadNum_=threadNum;}
+        static void SetThreadNum(int thread_num){thread_num_ = thread_num;}
         
         static TcpConnectionPtr  GetTcpConnectionPtr(int fd);
     private:
@@ -59,13 +63,10 @@ namespace luves
         ~ThreadsPool();
         ThreadsPool & operator=(ThreadsPool const &);
         ThreadsPool(ThreadsPool const &);
-        
-        bool isHSHA_;
-        bool isLF_;
-        
+   
         static std::map<int,TcpConnectionPtr>  * tcpConnectionFd_;
         static std::vector<int > accpetVec_;                                  //accept socket
-        static int threadNum_;
+        static int thread_num_;
         pthread_t * pthreadId_;
         
         static pthread_mutex_t pthreadMutex_;

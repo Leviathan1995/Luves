@@ -6,6 +6,7 @@
 //  Copyright © 2016年 leviathan. All rights reserved.
 //
 
+
 #include "luves.h"
 
 using namespace luves;
@@ -21,7 +22,7 @@ int main()
     Ip4Addr server_addr("127.0.0.1",8080);
 
 
-    HSHAServer server(&loop, server_addr,4);
+    HshaServer server(&loop, server_addr,4);
     server.SetReadCb(GetInput);
 
     server.SetWriteCb([](const TcpConnectionPtr & conn)

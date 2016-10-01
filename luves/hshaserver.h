@@ -12,7 +12,7 @@
 #include <functional>
 
 #include "tcpserver.h"
-#include "threads.h"
+#include "threadpool.h"
 #include "eventhandle.h"
 #include "net.h"
 
@@ -20,28 +20,28 @@ namespace luves
 {
     
     //
-    //HSHA model
+    //Hsha model
     //
     typedef std::shared_ptr<TcpServer> TcpServerPtr;
-    typedef std::function<void (const TcpConnectionPtr &)> HSHACallBack;
+    typedef std::function<void (const TcpConnectionPtr &)> HshaCallBack;
     
-    //HSHAServer
-    class HSHAServer
+    //HshaServer
+    class HshaServer
     {
     public:
-        HSHAServer(EventLoop *loop,Ip4Addr &addr,int threads_nums):server_(TcpServerPtr(new TcpServer(loop,addr))),threadNum_(threads_nums){}
+        HshaServer(EventLoop *loop,Ip4Addr &addr,int thread_num):server_(TcpServerPtr(new TcpServer(loop,addr))),thread_num_(thread_num){}
         
         void RunServer();
         
         //set call back function
-        void SetReadCb(const HSHACallBack & cb){readcb_=cb;};
-        void SetWriteCb(const HSHACallBack & cb){writecb_=cb;};
+        void SetReadCb(const HshaCallBack & cb){readcb_=cb;};
+        void SetWriteCb(const HshaCallBack & cb){writecb_=cb;};
         
         
     private:
-        int threadNum_;              //线程池中线程数量
+        int thread_num_;
         TcpServerPtr server_;
-        HSHACallBack readcb_,writecb_;
+        HshaCallBack readcb_,writecb_;
         
     };
 }

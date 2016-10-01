@@ -6,6 +6,7 @@
 //  Copyright © 2016年 leviathan. All rights reserved.
 //
 
+/*
 #include "luves.h"
 
 using namespace luves;
@@ -30,3 +31,4 @@ int main()
 
     loop.loop();
 }
+*/

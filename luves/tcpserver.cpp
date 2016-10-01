@@ -17,7 +17,7 @@ namespace luves {
     //
     TcpServer::~TcpServer()
     {
-        delete listenChannel_;
+        delete listen_channel_;
     }
     void  TcpServer::Bind()
     {
@@ -39,19 +39,18 @@ namespace luves {
     {
         this->Bind();
         this->Listen();
-        listenChannel_->SetEvent(EVFILT_READ);
-        listenChannel_->SetReadCb([this]{HandleAccept();});    
-        listenChannel_->SetIsListen(true);
-        loop_->AddChannel(listenChannel_);
-
+        listen_channel_->SetEvent(EVFILT_READ);
+        listen_channel_->SetReadCb([this]{HandleAccept();});
+        listen_channel_->SetIsListen(true);
+        loop_->AddChannel(listen_channel_);
     }
     
-    //当有新的连接,epoll被触发时,回调HandleAccept()函数并建立新的连接
+    //当有新的连接,epoll被触发,回调HandleAccept()函数并建立新的连接
     void TcpServer::HandleAccept()
     {
         struct sockaddr_in client_addr;
         int accept_fd;
-        while((accept_fd=Socket::Accept(listenChannel_->GetFd(), &client_addr))>=0)
+        while((accept_fd=Socket::Accept(listen_channel_->GetFd(), &client_addr))>=0)
         {
             sockaddr_in local,peer;
             socklen_t len=sizeof(local);
@@ -77,15 +76,15 @@ namespace luves {
     void TcpServer::NewConnection(int accept_fd,Ip4Addr local,Ip4Addr peer)
     {
         TcpConnectionPtr connection=TcpConnectionPtr(new TcpConnection(loop_));
-        if (readcb_)
-            connection->SetReadCb(readcb_);
-        if (writecb_)
-            connection->SetWriteCb(writecb_);
-        if (closecb_)
-            connection->SetCloseCb(closecb_);
+        if (read_cb_)
+            connection->SetReadCb(read_cb_);
+        if (write_cb_)
+            connection->SetWriteCb(write_cb_);
+        if (close_cb_)
+            connection->SetCloseCb(close_cb_);
         
         connection->Register(loop_, accept_fd,local,peer);
-        tcpConnectionFd_[accept_fd]=connection;    //添加Tcp连接与accept套接字至映射队列        
+        tcp_connection_fd_[accept_fd]=connection;
     }
     
     //
