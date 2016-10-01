@@ -1,5 +1,5 @@
 //
-//  test_iocp.cpp
+//  test_hsha.cpp
 //  Luves
 //
 //  Created by leviathan on 16/6/28.
@@ -11,26 +11,22 @@
 
 using namespace luves;
 
-void GetInput(const TcpConnectionPtr & conn)
+Buffer GetInput(const TcpConnectionPtr & conn)
 {
-    std::cout<<conn->GetInputBuffer();
+    return conn->GetInputBuffer();
 }
 
 int main()
 {
     EventLoop loop;
-    Ip4Addr server_addr("127.0.0.1",6543);
+    Ip4Addr server_addr("0.0.0.0",6543);
 
 
-    HshaServer server(&loop, server_addr,8);
+    HshaServer server(&loop, server_addr,4);
     server.SetReadCb(GetInput);
 
     server.SetWriteCb([](const TcpConnectionPtr & conn)
-                      {conn->Send("HTTP/1.1 200 OK\r\n"
-                                  "Content-Type:text/html;charset=utf-8\r\n"
-                                  "Content-Length:0\r\n"
-                                  "\r\n"
-                                  );});
+                      {conn->Send(conn->GetInputBuffer());});
 
     server.RunServer();
     loop.loop();

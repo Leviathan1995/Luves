@@ -12,48 +12,48 @@
 //事件通道
 //
 namespace luves {
+    
+Channel::~Channel()
+{
+    Close();
+}
 
-    Channel::~Channel()
+//关闭通道
+void Channel::Close()
+{
+    if (fd_>0)
     {
-        Close();
+        loop_->GetIOModel()->DeleteChannel(this);
+        
+        close(fd_);
     }
+}
 
-    //关闭通道
-    void Channel::Close()
+void Channel::HandleEvent()
+{
+    if (active_events_ & EVFILT_READ)
     {
-        if (fd_>0)
+        if (readcb_)
         {
-            loop_->GetIOModel()->DeleteChannel(this);
-
-            close(fd_);
+            readcb_();
         }
     }
-
-    void Channel::HandleEvent()
+    if (active_events_ & EVFILT_WRITE)
     {
-        if (active_events_ & EVFILT_READ)
+        if (writecb_)
         {
-            if (readcb_)
-            {
-                readcb_();
-            }
-        }
-        if (active_events_ & EVFILT_WRITE)
-        {
-            if (writecb_)
-            {
-                writecb_();
-            }
+            writecb_();
         }
     }
+}
 
-    bool Channel::ReadEnable()
-    {
-        return event_ & readevent;
-    }
+bool Channel::ReadEnable()
+{
+    return event_ & readevent;
+}
 
-    bool Channel::WriteEnable()
-    {
-        return event_ & writeevent;
-    }
+bool Channel::WriteEnable()
+{
+    return event_ & writeevent;
+}
 }

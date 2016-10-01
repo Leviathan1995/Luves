@@ -1,5 +1,4 @@
 CC=g++
-
 CFLAGS=-std=c++11 -fPIC -c
 DFLAGS=-std=c++11 -shared
 LIBLUVES=libluves.so
