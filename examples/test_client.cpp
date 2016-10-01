@@ -7,7 +7,6 @@
 //
 
 /*
-
 #include "luves.h"
 
 using namespace luves;
@@ -17,10 +16,9 @@ int main()
     EventLoop * loop;
     Ip4Addr server_addr("127.0.0.1",1234);
     TcpClient client(loop,server_addr);
-    client.SetReadCb([](const TcpConnPtr & conn)
-                     {conn->Send(conn->GetInput());});
+    client.SetReadCb([](const TcpConnectionPtr & conn)
+                     {conn->Send(conn->GetInputBuffer());});
     loop->loop();
     return 0;
 }
- 
 */

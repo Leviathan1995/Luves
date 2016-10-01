@@ -15,10 +15,11 @@ void GetInput(const TcpConnectionPtr & conn)
 {
     std::cout<<conn->GetInputBuffer();
 }
+
 int main()
 {
     EventLoop loop;
-    Ip4Addr server_addr("127.0.0.1",8080);
+    Ip4Addr server_addr("127.0.0.1",6543);
     TcpServer server(&loop, server_addr);
     server.SetReadCb(GetInput);
     server.SetWriteCb([](const TcpConnectionPtr & conn)
@@ -27,8 +28,8 @@ int main()
                                  "Content-Length:18\r\n"
                                  "\r\n"
                                  "Welcome to tinyweb");});
+    
     server.RunServer();
-
     loop.loop();
 }
 */

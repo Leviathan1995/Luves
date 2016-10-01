@@ -31,6 +31,7 @@ namespace luves {
         connection->channel_->SetWriteCb([=]{connection->HandleWrite(connection);});
     }
  
+    //写入消息至缓冲区
     void TcpConnection::Send(Buffer & msg)
     {
         if (channel_)
@@ -54,9 +55,13 @@ namespace luves {
         }
     }
     
-    void  TcpConnection::HandleRead(const TcpConnectionPtr & conn)
+    //接收消息
+    void TcpConnection::HandleRead(const TcpConnectionPtr & conn)
     {
+        while (1) {
+            
         int n=input_.ReadImp(channel_->GetFd());
+        INFO_LOG("Receive %d bytes",n);
         if (n>0)
         {
             if (readcb_)
@@ -64,13 +69,16 @@ namespace luves {
                 readcb_(shared_from_this());
             }
         }
-        else if(n==0)
+        else if(n == -1)
         {
             Close();
+            break;
+        }
         }
         
     }
     
+    //发送消息
     void TcpConnection::HandleWrite(const TcpConnectionPtr & conn)
     {
         if (writecb_)

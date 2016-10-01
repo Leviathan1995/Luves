@@ -88,8 +88,7 @@ namespace luves {
     }
     
     //
-    //TCP Client模块
-    //新建TCP客户端
+    //TCP Client
     //
     void TcpClient::RunClient()
     {

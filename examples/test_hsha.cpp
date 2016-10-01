@@ -19,18 +19,18 @@ void GetInput(const TcpConnectionPtr & conn)
 int main()
 {
     EventLoop loop;
-    Ip4Addr server_addr("127.0.0.1",8080);
+    Ip4Addr server_addr("127.0.0.1",6543);
 
 
-    HshaServer server(&loop, server_addr,4);
+    HshaServer server(&loop, server_addr,8);
     server.SetReadCb(GetInput);
 
     server.SetWriteCb([](const TcpConnectionPtr & conn)
                       {conn->Send("HTTP/1.1 200 OK\r\n"
                                   "Content-Type:text/html;charset=utf-8\r\n"
-                                  "Content-Length:18\r\n"
+                                  "Content-Length:0\r\n"
                                   "\r\n"
-                                  "Welcome to tinyweb");});
+                                  );});
 
     server.RunServer();
     loop.loop();
