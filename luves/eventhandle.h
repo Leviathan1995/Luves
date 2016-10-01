@@ -62,7 +62,7 @@ namespace luves {
         bool looping_;
         bool quit_;
         std::shared_ptr<EventModel> io_model_;   //事件循环使用的IO复用模型
-        std::shared_ptr<Timer> timer_;          //定时处理单元
+        std::shared_ptr<Timer> timer_;           //定时处理单元
         
     };
     
