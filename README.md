@@ -1,4 +1,6 @@
 #Luves
+======
+[![Build Status](https://travis-ci.org/Leviathan1995/Luves.svg?branch=master)](https://travis-ci.org/Leviathan1995/Luves)
 
 Luves是一个轻量级的事件触发网络库,封装了Socket,简化基于Socket程序开发。目标是封装了以下三种事件的响应:IO事件,定时器事件,信号事件。支持跨平台,OS X环境使用kqueue模型,Linux环境使用Epoll模型,实现半同步/半异步(HSHA)服务器框架模型。
 
