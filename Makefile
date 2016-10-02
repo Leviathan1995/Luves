@@ -11,7 +11,7 @@ build:$(LIBLUVES)
 	rm $(PREFIX)/*.o
 
 $(LIBLUVES):$(OBJ)
-	$(CC) $(DFLAGS) -o $@ $(OBJ)
+	$(CC) $(DFLAGS) -o $(PREFIX)/$@ $(OBJ)
 
 
 $(PREFIX)/%.o: $(PREFIX)/%.cpp $(PREFIX)/%.h

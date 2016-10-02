@@ -1,13 +1,14 @@
 //
-//  eventmodel.cpp
+//  kqueue.cpp
 //  Luves
 //
 //  Created by hashdata on 16/9/30.
 //  Copyright © 2016年 hashdata. All rights reserved.
 //
 
-#include "kqueue.h"
+#ifdef __APPLE__
 
+#include "kqueue.h"
 
 namespace luves {
 
@@ -39,7 +40,7 @@ namespace luves {
 
     }
 
-    void KqueueModel::RunModel(int64_t waittime)
+    void KqueueModel::RunModel(int64_t wait_time)
     {
         //struct timespec time_out={static_cast<__darwin_time_t>(0.001*waittime),0};
 
@@ -53,7 +54,7 @@ namespace luves {
                 ERROR_LOG("kqueue return error %d %s",errno,strerror(errno)); //kqueue error
                 exit(1);
             }
-            else if ((trigger_events[i].ident==listen_fd_ )||((trigger_events[i].flags & EVFILT_READ)&& is_hsha_==false))
+            else if ((trigger_events[i].ident==listen_fd_ )||((trigger_events[i].flags & EVFILT_READ) && (is_hsha_==false)))
                 //default or connnect coming
             {
                 auto event=&trigger_events[i];
@@ -75,3 +76,5 @@ namespace luves {
         return trigger_channel_list_;
     }
 }
+
+#endif /* MAC OS X */
