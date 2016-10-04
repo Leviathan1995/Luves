@@ -1,5 +1,5 @@
 //
-//  channel.hpp
+//  channel.h
 //  Luves
 //
 //  Created by hashdata on 16/9/30.
@@ -10,7 +10,7 @@
 #define CHANNEL_H_
 
 #include "eventhandle.h"
-
+#include "functional"
 //
 //事件通道,接管一个fd
 //
