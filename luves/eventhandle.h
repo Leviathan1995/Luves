@@ -11,8 +11,11 @@
 
 #ifdef __linux__
 #include <sys/epoll.h>
+#include "epoll.h"
+
 #elif  __APPLE__
 #include <sys/event.h>
+#include "kqueue.h"
 #endif
 
 
@@ -24,7 +27,6 @@
 
 #include "timer.h"
 #include "logger.h"
-#include "kqueue.h"
 #include "channel.h"
 #include "threadpool.h"
 
