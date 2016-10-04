@@ -9,6 +9,7 @@
 #ifndef TIMER_H_
 #define TIMER_H_
 
+#include <functional>
 #include <chrono>
 #include <atomic>
 #include <map>

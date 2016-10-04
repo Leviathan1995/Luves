@@ -10,6 +10,7 @@
 #define NET_H_
 
 #include <iostream>
+#include <cstring>
 #include <unistd.h>
 #include <string>
 #include <netinet/in.h>

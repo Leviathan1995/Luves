@@ -69,6 +69,5 @@ namespace luves {
         Buffer input_,output_;
     };
 
-
 }
 #endif /* tcp_connection_h */

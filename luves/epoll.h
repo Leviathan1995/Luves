@@ -13,9 +13,11 @@
 
 #include <sys/epoll.h>
 #include <vector>
+#include <cstring>
 #include <map>
 #include "channel.h"
 #include "eventhandle.h"
+#include "threadpool.h"
 
 
 namespace luves
@@ -23,7 +25,7 @@ namespace luves
 	class Channel;
 
 	typedef std::vector<Channel *> ChannelList;
-    typedef std::map<int, Channel*> ChannelMap;
+	typedef std::map<int, Channel*> ChannelMap;
 
 	class EpollModel
 	{
@@ -38,20 +40,22 @@ namespace luves
 
 			//启动事件模型
 			void RunModel(int64_t wait_time);
-
+			
+            		ChannelList  & GetTriggerPtr();
 			void SetHsha(bool is_hsha){is_hsha = is_hsha_;}
 		private:
 			bool is_hsha_;
 			struct epoll_event trigger_events_[1024];
-			static ChannelMap channel_fd_map;			//channel与fd映射
-			ChannelList channel_list_;					//channel集合
+			static ChannelMap channel_fd_map_;			//channel与fd映射
+			ChannelList channel_list_;				//channel集合
 			ChannelList trigger_channel_list_;			//触发的channel集合
 			int ep_;
+			int max_events_;
 			int listen_fd_;
 	};
 }
 
 
-#endif /* Kqueue.h */
+#endif /* kqueue.h */
 
 #endif /* LINUX */

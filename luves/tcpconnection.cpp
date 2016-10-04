@@ -20,7 +20,7 @@ namespace luves {
     {
         loop_=loop;
         channel_=new Channel(loop_,fd);
-        channel_->SetEvent(EVFILT_READ|EVFILT_WRITE);
+        channel_->SetEvent(readevent | writeevent);
         loop_->AddChannel(channel_);
         TRACE_LOG(" TCP服务创建成功:%s--%s:%d",local.ToString().c_str(),peer.ToString().c_str(),fd);
 

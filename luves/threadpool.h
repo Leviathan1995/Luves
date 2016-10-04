@@ -10,6 +10,7 @@
 #define THREADS_H_
 
 #include <functional>
+#include <memory>
 #include <pthread.h>
 #include <vector>
 #include <map>

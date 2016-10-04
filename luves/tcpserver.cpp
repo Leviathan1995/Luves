@@ -7,6 +7,7 @@
 //
 
 #include "tcpserver.h"
+#include "eventhandle.h"
 
 namespace luves {
     
@@ -39,7 +40,7 @@ namespace luves {
     {
         this->Bind();
         this->Listen();
-        listen_channel_->SetEvent(EVFILT_READ);
+        listen_channel_->SetEvent(readevent);
         listen_channel_->SetReadCb([this]{HandleAccept();});
         listen_channel_->SetIsListen(true);
         loop_->AddChannel(listen_channel_);
@@ -94,7 +95,7 @@ namespace luves {
     {
         this->Bind();
         this->HandleConnect();
-        client_channel_->SetEvent(EVFILT_READ);
+        client_channel_->SetEvent(readevent);
         loop_->UpdateChannel(client_channel_);
         
         TcpConnectionPtr conn=TcpConnectionPtr(new TcpConnection(loop_));
