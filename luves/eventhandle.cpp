@@ -16,7 +16,7 @@ namespace luves {
     EventLoop::EventLoop()
     {
 
-        io_model_=std::make_shared<KqueueModel>();
+        io_model_=std::make_shared<io_model>();
         timer_=std::make_shared<Timer>();
 
     }
