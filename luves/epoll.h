@@ -17,13 +17,13 @@
 #include "channel.h"
 #include "eventhandle.h"
 
-using namespace luves;
 
 namespace luves
 {
 	class Channel;
 
 	typedef std::vector<Channel *> ChannelList;
+    typedef std::map<int, Channel*> ChannelMap;
 
 	class EpollModel
 	{
