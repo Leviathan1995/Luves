@@ -61,7 +61,7 @@ Luves是一个轻量级的事件触发网络库,封装了Socket,简化基于Sock
 Version 0.01
 
 - 原型开发,目前使用kqueue,暂支持OS X系统,实现半同步半异步服务器框架.封装了IO事件与定时事件。
-
+- 实现跨平台,添加linux平台的epoll模块。
 
 
 ##<a id="title04"/> License
