@@ -31,7 +31,7 @@
 namespace luves {
 
 #ifdef __linux__
-    class EpollModel
+    class EpollModel;
 #elif __APPLE__
     class KqueueModel;
 #endif

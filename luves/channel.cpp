@@ -31,14 +31,14 @@ namespace luves {
 
     void Channel::HandleEvent()
     {
-        if (active_events_ & EVFILT_READ)
+        if (active_events_ & readevent)
         {
             if (readcb_)
             {
                 readcb_();
             }
         }
-        if (active_events_ & EVFILT_WRITE)
+        if (active_events_ & writeevent)
         {
             if (writecb_)
             {
