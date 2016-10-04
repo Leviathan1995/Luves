@@ -9,7 +9,6 @@
 #ifndef EVENT_HANDLE_H_
 #define EVENT_HANDLE_H_
 
-#include <sys/event.h>
 #include <memory>
 #include <vector>
 #include <map>
