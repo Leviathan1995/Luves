@@ -9,6 +9,13 @@
 #ifndef EVENT_HANDLE_H_
 #define EVENT_HANDLE_H_
 
+#ifdef __linux__
+#include <sys/epoll.h>
+#elif  __APPLE__
+#include <sys/event.h>
+#endif
+
+
 #include <memory>
 #include <vector>
 #include <map>
