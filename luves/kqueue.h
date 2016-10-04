@@ -16,7 +16,6 @@
 #include "eventhandle.h"
 #include "channel.h"
 
-using namespace luves;
 
 namespace luves {
 
