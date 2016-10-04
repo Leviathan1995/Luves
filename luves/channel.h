@@ -44,7 +44,7 @@ namespace luves {
             //设置监听IO类型
             void SetEvent(int event){event_=event;}
             //设置活动事件的IO类型
-            void SetActiveEvent(ushort active_event){active_events_=active_event;}
+            void SetActiveEvent(ushort active_event){active_events_ = active_event;}
 
             //设置is_listen_
             void SetIsListen(bool listen){is_listen_=listen;}

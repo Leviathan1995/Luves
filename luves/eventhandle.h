@@ -30,7 +30,12 @@
 
 namespace luves {
 
+#ifdef __linux__
+    class EpollModel
+#elif __APPLE__
     class KqueueModel;
+#endif
+
     class Channel;
 
     //
@@ -71,7 +76,7 @@ namespace luves {
 
     };
 
-    //监听事件类型
+//监听事件类型
 #ifdef __linux__
     const int readevent = EPOLLIN;
     const int readevent = EPOLLOUT;
@@ -79,7 +84,6 @@ namespace luves {
     const int readevent=EVFILT_READ;
     const int writeevent=EVFILT_WRITE;
 #endif
-
 
 }
 
