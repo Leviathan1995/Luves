@@ -32,10 +32,10 @@ namespace luves {
 
 #ifdef __linux__
     class EpollModel;
-    auto io_model = EpollModel;
+    typedef EpollModel io_model;
 #elif __APPLE__
     class KqueueModel;
-    auto io_model = KqueueModel;
+    typedef KqueueModel io_model;
 #endif
 
     class Channel;
@@ -73,7 +73,7 @@ namespace luves {
         TriggerChannels trigger_channels_;
         bool looping_;
         bool quit_;
-        std::shared_ptr<KqueueModel> io_model_;   //事件循环使用的IO复用模型
+        std::shared_ptr<io_model> io_model_;   //事件循环使用的IO复用模型
         std::shared_ptr<Timer> timer_;          //定时处理单元
 
     };
