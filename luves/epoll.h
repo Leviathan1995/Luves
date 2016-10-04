@@ -47,7 +47,7 @@ namespace luves
 			ChannelList channel_list_;					//channel集合
 			ChannelList trigger_channel_list_;			//触发的channel集合
 			int ep_;
-			int listen_fd_
+			int listen_fd_;
 	}
 }
 
