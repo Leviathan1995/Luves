@@ -81,10 +81,10 @@ namespace luves {
 //监听事件类型
 #ifdef __linux__
     const int readevent = EPOLLIN;
-    const int readevent = EPOLLOUT;
+    const int writeevent = EPOLLOUT;
 #elif __APPLE__
-    const int readevent=EVFILT_READ;
-    const int writeevent=EVFILT_WRITE;
+    const int readevent = EVFILT_READ;
+    const int writeevent = EVFILT_WRITE;
 #endif
 
 }
