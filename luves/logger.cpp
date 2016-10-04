@@ -7,6 +7,7 @@
 //
 
 #include "logger.h"
+#include "stdarg.h"  
 
 namespace luves
 {
