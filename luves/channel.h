@@ -18,6 +18,7 @@
 namespace luves {
 
     class EventLoop;
+
     class Channel
     {
         public:
