@@ -51,4 +51,7 @@ namespace luves
 	}
 }
 
+
+#endif /* Kqueue.h */
+
 #endif /* LINUX */
