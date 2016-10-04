@@ -32,8 +32,10 @@ namespace luves {
 
 #ifdef __linux__
     class EpollModel;
+    auto io_model = EpollModel;
 #elif __APPLE__
     class KqueueModel;
+    auto io_model = KqueueModel;
 #endif
 
     class Channel;
@@ -60,7 +62,7 @@ namespace luves {
         TimerId startTimer(int64_t delaytime,const TimerTask & task,int64_t interval=0);
         bool stopTimer(TimerId timerid);
         //获取IO模型指针
-        std::shared_ptr<KqueueModel> &  GetIOModel(){return io_model_;}
+        std::shared_ptr<io_model> &  GetIOModel(){return io_model_;}
 
         void Exit();
 
