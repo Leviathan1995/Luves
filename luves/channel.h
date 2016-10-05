@@ -9,8 +9,10 @@
 #ifndef CHANNEL_H_
 #define CHANNEL_H_
 
+#include <functional>
 #include "eventhandle.h"
-#include "functional"
+
+
 //
 //事件通道,接管一个fd
 //
