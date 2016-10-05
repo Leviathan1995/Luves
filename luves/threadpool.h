@@ -14,8 +14,8 @@
 #include <pthread.h>
 #include <vector>
 #include <map>
-
 #include "tcpconnection.h"
+#include "logger.h"
 
 namespace luves
 {
@@ -56,7 +56,11 @@ namespace luves
         
         static void SetTcpConnectionFdPtr(std::map<int,TcpConnectionPtr> * Tcpconnection_fd_map){tcpConnectionFd_= Tcpconnection_fd_map;}
         
-        static void SetThreadNum(int thread_num){thread_num_ = thread_num;}
+        static void SetThreadNum(int thread_num)
+        {
+            thread_num_ = thread_num;
+            INFO_LOG("Set the number of thread : %d", thread_num_);
+        }
         
         static TcpConnectionPtr  GetTcpConnectionPtr(int fd);
     private:

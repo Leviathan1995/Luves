@@ -9,6 +9,7 @@
 #ifndef TCP_SERVER_H_
 #define TCP_SERVER_H_
 
+
 #include <iostream>
 #include <sys/socket.h>
 #include <string>
@@ -32,7 +33,8 @@ namespace luves {
                 SocketOp::SetReuseaddr(listenFd_);
                 SocketOp::SetNonblock(listenFd_);
                 listen_channel_=new Channel(loop,listenFd_);
-
+                INFO_LOG("Set server ip: %s", addr_.GetIp().c_str());
+                INFO_LOG("Set server ip: %d", addr_.GetPort());
             };
         virtual ~TcpServer();
         

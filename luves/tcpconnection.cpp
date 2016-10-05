@@ -23,7 +23,7 @@ namespace luves {
         channel_ = new Channel(loop_,fd);
         channel_->SetEvent(readevent | writeevent);
         loop_->AddChannel(channel_);
-        TRACE_LOG(" TCP服务创建成功:%s--%s:%d",local.ToString().c_str(),peer.ToString().c_str(),fd);
+        TRACE_LOG("TCP服务创建成功:%s--%s:%d",local.ToString().c_str(),peer.ToString().c_str(),fd);
 
         TcpConnectionPtr connection=shared_from_this();
         
