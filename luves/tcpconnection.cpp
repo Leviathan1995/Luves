@@ -19,7 +19,8 @@ namespace luves {
     void TcpConnection::Register(EventLoop * loop,int fd,Ip4Addr local,Ip4Addr peer)
     {
         loop_=loop;
-        channel_=new Channel(loop_,fd);
+        SocketOp::SetNonblock(fd);
+        channel_ = new Channel(loop_,fd);
         channel_->SetEvent(readevent | writeevent);
         loop_->AddChannel(channel_);
         TRACE_LOG(" TCP服务创建成功:%s--%s:%d",local.ToString().c_str(),peer.ToString().c_str(),fd);
@@ -58,22 +59,22 @@ namespace luves {
     //接收消息
     void TcpConnection::HandleRead(const TcpConnectionPtr & conn)
     {
-        while (1) {
-            
-        int n=input_.ReadImp(channel_->GetFd());
-        INFO_LOG("Receive %d bytes",n);
-        if (n>0)
+        while (1)
         {
-            if (readcb_)
+            int n=input_.ReadImp(channel_->GetFd());
+            INFO_LOG("Receive %d bytes",n);
+            if (n>0)
             {
-                readcb_(shared_from_this());
+                if (readcb_)
+                {
+                    readcb_(shared_from_this());
+                }
             }
-        }
-        else if(n == -1)
-        {
-            Close();
-            break;
-        }
+            else if(n == -1)
+            {
+                Close();
+                break;
+            }
         }
         
     }
