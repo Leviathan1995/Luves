@@ -81,10 +81,10 @@ namespace luves
 
     void Socket::Listen(int fd)
     {
-        int ret=listen(fd, 1024);
+        int ret=listen(fd, 256);
         if (ret==-1)
         {
-            ERROR_LOG("listen to %d failed! %d %s",fd,errno,strerror(errno));
+            FATALIF_LOG(ret, "listen to %d failed! %d %s", fd, errno, strerror(errno));
         }
     }
 

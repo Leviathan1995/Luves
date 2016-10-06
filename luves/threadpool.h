@@ -42,7 +42,7 @@ namespace luves
         static void AddTask(int accept_fd)
         {
             pthread_mutex_lock(&acceptMutex_);
-            accpetVec_.push_back(accept_fd);
+            connect_fd_.push_back(accept_fd);
             pthread_mutex_unlock(&acceptMutex_);
             pthread_cond_signal(&pthreadCond_);
         };
@@ -54,7 +54,7 @@ namespace luves
         static void SetReadCb(std::function<void (const TcpConnectionPtr &)> & cb){readcb_=cb;}
         static void SetWriteCb(std::function<void (const TcpConnectionPtr &)> & cb){writecb_=cb;}
         
-        static void SetTcpConnectionFdPtr(std::map<int,TcpConnectionPtr> * Tcpconnection_fd_map){tcpConnectionFd_= Tcpconnection_fd_map;}
+        static void SetTcpConnectionFdPtr(std::map<int,TcpConnectionPtr> * Tcpconnection_fd_map){tcpConnectionFd_ = Tcpconnection_fd_map;}
         
         static void SetThreadNum(int thread_num)
         {
@@ -70,7 +70,7 @@ namespace luves
         ThreadsPool(ThreadsPool const &);
    
         static std::map<int,TcpConnectionPtr>  * tcpConnectionFd_;
-        static std::vector<int > accpetVec_;                                  //accept socket
+        static std::vector<int > connect_fd_;                                  //connecting socket
         static int thread_num_;
         pthread_t * pthreadId_;
         
