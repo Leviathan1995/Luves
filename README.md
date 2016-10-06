@@ -23,11 +23,11 @@ Luves是一个轻量级的事件触发网络库,封装了Socket,简化基于Sock
 
 ##<a id="title01"/> 安装
 
+		make
 
 
-
-##<a id="title02"> 技术实现
-
+##<a id="title03"> 编译
+		g++ -std=c++11 test_hsha.cpp -L/usr/local/lib  -lluves
 
 ##<a id="title03"> 示例
 简单的半同步/半异步服务器
