@@ -36,8 +36,7 @@ namespace luves
         //set call back function
         void SetReadCb(const HshaCallBack & cb){readcb_=cb;};
         void SetWriteCb(const HshaCallBack & cb){writecb_=cb;};
-        
-        
+
     private:
         int thread_num_;
         TcpServerPtr server_;

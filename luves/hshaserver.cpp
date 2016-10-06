@@ -16,7 +16,8 @@ namespace luves
         server_->RunServer();
         server_->SetReadCb(readcb_);
         server_->SetWriteCb(writecb_);
-        
+        server_->Sethsha(true);
+
         ThreadsPool::SetThreadNum(thread_num_);
         ThreadsPool::SetTcpConnectionFdPtr(server_->GetTcpConnMap());
         ThreadsPool::Instance().CreatePool();

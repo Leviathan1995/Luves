@@ -57,15 +57,20 @@ namespace luves {
         EventLoop * GetLoop(){ return loop_;}
   
         std::map<int,TcpConnectionPtr> * GetTcpConnMap(){return &tcp_connection_fd_;}
+
+        void Sethsha(bool is_hsha)
+        {
+            is_hsha_ = is_hsha;
+            loop_->SetHsha(is_hsha_);
+        }
     private:
         
         std::map<int,TcpConnectionPtr> tcp_connection_fd_;
-
         struct sockaddr_in serverAddr_;
         std::string ip_;
         short port_;
         int listenFd_;
-        bool listenning_;
+        bool listenning_, is_hsha_;
         Ip4Addr addr_;
         EventLoop * loop_;
         Channel * listen_channel_;
