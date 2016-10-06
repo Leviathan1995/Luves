@@ -9,6 +9,7 @@ PREFIX=luves
 
 build:$(LIBLUVES)
 	rm $(PREFIX)/*.o
+	cp -fr luves /usr/local/include
 
 $(LIBLUVES):$(OBJ)
 	$(CC) $(DFLAGS) -o $@ $(OBJ)
