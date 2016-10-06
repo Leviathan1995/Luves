@@ -8,12 +8,12 @@ OBJ=$(SOURCES:%.cpp=%.o)
 PREFIX=luves
 
 build:$(LIBLUVES)
-	rm $(PREFIX)/*.o
 	cp -fr luves /usr/local/include
+	cp $(LIBLUVES) /usr/local/lib
+	rm $(PREFIX)/*.o $(LIBLUVES)
 
 $(LIBLUVES):$(OBJ)
 	$(CC) $(DFLAGS) -o $@ $(OBJ)
-
 
 $(PREFIX)/%.o: $(PREFIX)/%.cpp $(PREFIX)/%.h
 	$(CC) $(CFLAGS) -c $< -o $@
