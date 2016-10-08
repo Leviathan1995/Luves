@@ -20,11 +20,12 @@ namespace luves
         "DEBUG",
         "TRACE"
     };
-
+    
     Logger::Logger(): level_(LINFO),mode_(TERMIANAL)
     {
         fd_=-1;
         level_=LWARN;
+        logger_mutex = PTHREAD_MUTEX_INITIALIZER;
     }
 
     Logger::~Logger()
@@ -95,8 +96,10 @@ namespace luves
 
         if (mode_==FILE)
             write(fd_, buffer, 1);
-        else if(mode_==TERMIANAL)
+        else if(mode_ == TERMIANAL)
+            pthread_mutex_lock(&logger_mutex);
             std::cout<<buffer<<std::endl<<std::endl;
+            pthread_mutex_unlock(&logger_mutex);
         delete []  buffer;
     }
 }
