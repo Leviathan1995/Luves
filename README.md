@@ -32,7 +32,7 @@ Luves是一个轻量级的事件触发网络库,封装了Socket,简化基于Sock
 ##<a id="title03"> 示例
 简单的半同步/半异步服务器
 
-	#include "luves.h"
+	#include "luves/luves.h"
 	using namespace luves;
 	
 	void GetInput(const TcpConnPtr & conn)
@@ -60,38 +60,43 @@ Luves是一个轻量级的事件触发网络库,封装了Socket,简化基于Sock
 	
 - 使用ApacheBench测试:
 	
-		@ubuntu:~$ ab -n 100000 -c 30  http://0.0.0.0:6543/
+		@ubuntu:~$ ab -n 10000 -c 100 -k http://0.0.0.0:6543/
 - 测试结果:
 
-		Server Software:        
+		Server Software:
 		Server Hostname:        0.0.0.0
 		Server Port:            6543
-		Document Path:          /
-		Document Length:        0 bytes
 
-		Concurrency Level:      30
-		Time taken for tests:   5.845 seconds
-		Complete requests:      100000
-		Failed requests:        0
-		Total transferred:      0 bytes
-		HTML transferred:       0 bytes
-		Requests per second:    17109.49 [#/sec] (mean)
-		Time per request:       1.753 [ms] (mean)
-		Time per request:       0.058 [ms] (mean, across all concurrent requests)
-		Transfer rate:          0.00 [Kbytes/sec] received
+		Document Path:          /
+		Document Length:        920 bytes
+
+		Concurrency Level:      100
+		Time taken for tests:   0.425 seconds
+		Complete requests:      10000
+		Failed requests:        9524
+   		(Connect: 0, Receive: 0, Length: 9524, Exceptions: 0)
+		Non-2xx responses:      10000
+		Keep-Alive requests:    10000
+		Total transferred:      68844544 bytes
+		HTML transferred:       67804544 bytes
+		Requests per second:    23527.53 [#/sec] (mean)
+		Time per request:       4.250 [ms] (mean)
+		Time per request:       0.043 [ms] (mean, across all concurrent requests)
+		Transfer rate:          158177.93 [Kbytes/sec] received
 
 		Connection Times (ms)
-              			min  mean[+/-sd] median   max
-		Connect:        0    0  18.7      0    1008
-		Processing:     0    1   4.6      1     225
-		Waiting:        0    0   0.0      0       0
-		Total:          0    2  19.3      1    1008
+              		min  mean[+/-sd] median   max
+		Connect:        0    0   0.5      0       8
+		Processing:     0    4  12.9      0     375
+		Waiting:        0    4  12.9      0     375
+		Total:          0    4  13.0      0     375
 
 ##<a id="title05"/> 版本更新日志
 Version 0.01
 
 - 原型开发,目前使用kqueue,暂支持OS X系统,实现半同步半异步服务器框架.封装了IO事件与定时事件。
 - 实现跨平台,添加Linux平台的Epoll模块。
+- 修复多线程日志bug
 
 
 ##<a id="title06"/> License
