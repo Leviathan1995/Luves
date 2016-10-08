@@ -1,97 +1,105 @@
 //
-//  log.hpp
+//  log.cpp
 //  Luves
 //
 //  Created by leviathan on 16/6/17.
 //  Copyright © 2016年 leviathan. All rights reserved.
 //
 
-#ifndef LOGGER_H_
-#define LOGGER_H_
-
-#include <stdio.h>
-#include <iostream>
-#include <string>
-#include <unistd.h>
-#include <fcntl.h>
-#include <sys/time.h>
-
+#include "logger.h"
+#include "stdarg.h"  
 
 namespace luves
 {
-    extern std::string strlevel[];
-    
-    //日志等级
-    enum loglevel
-    {
-        LDEBUG, //指明细致的事件信息，对调试应用最有用。
-        LERROR, //指明错误事件，但应用可能还能继续运行。
-        LFATAL, //指明非常严重的错误事件，可能会导致应用终止执行。
-        LINFO,  //指明描述信息，从粗粒度上描述了应用运行过程。
-        LTRACE, //比DEBUG级别的粒度更细。
-        LWARN,  //指明潜在的有害状况。
 
+    std::string strlevel[]=
+    {
+        "ERROR",
+        "WARN",
+        "INFO",
+        "DEBUG",
+        "TRACE"
     };
     
-    
-#define printlog(level,...) \
-    do { \
-        if (level<=Logger::Instance().GetLevel()) { \
-            Logger::Instance().PrintLog(level, __FILE__, __LINE__, __func__, __VA_ARGS__); \
-        } \
-    } while(0)
-    
-    
-#define TRACE_LOG(...) printlog(LTRACE, __VA_ARGS__)
-#define DEBUG_LOG(...) pringlog(LDEBUG, __VA_ARGS__)
-#define INFO_LOG(...) printlog(LINFO, __VA_ARGS__)
-#define WARN_LOG(...) printlog(LWARN, __VA_ARGS__)
-#define ERROR_LOG(...) printlog(LERROR, __VA_ARGS__)
-#define FATAL_LOG(...) printlog(LFATAL, __VA_ARGS__)
-#define FATALIF_LOG(b, ...) do { if((b)) { printlog(LFATAL, __VA_ARGS__); } } while (0)
-#define CHECK_LOG(b, ...) do { if((b)) { printlog(LFATAL, __VA_ARGS__); } } while (0)
-#define EXITIF_LOG(b, ...) do { if ((b)) { printlog(LERROR, __VA_ARGS__); _exit(1); }} while(0)
-    
-#define SETLOGLEVEL(l) Log::Instance().SetLevel(l)
-#define SETLOGFILE(n) Log::Instance().SetFileName(n)
-    
-    //日志模式,分为终端打印与文件输出两种,默认终端打印
-    enum logmode
+    Logger::Logger(): level_(LINFO),mode_(TERMIANAL)
     {
-        TERMIANAL,
-        FILE
-    };
-    
-    
-    //
-    //日志模块,单例模式
-    //
-    class Logger
+        fd_=-1;
+        level_=LWARN;
+        logger_mutex = PTHREAD_MUTEX_INITIALIZER;
+    }
+
+    Logger::~Logger()
     {
-    public:
-        static Logger & Instance()
+        if (fd_!=-1)
         {
-            static Logger log;
-            return log;
+            close(fd_);
         }
-        void SetLogMode(logmode mode){mode_=mode;};
-        void PrintLog(int level,const char * file,int line,const char * func ,const char * parm...);
-        void SetLevel(const std::string & level);
-        void SetLevel(loglevel level){level_=level;}
-        
-        loglevel & GetLevel(){return level_;}
-        void SetFileName(const std::string & filename);
-    private:
-        Logger();
-        ~Logger();
-        Logger & operator=(Logger const &);   // assign op. hidden
-        Logger(Logger const &);               // copy ctor hidden
-        std::string filename_;
-        loglevel level_;                //log level
-        int fd_;                        //file descriptor
-        logmode mode_;
-        
-    };
-}
+    }
 
-#endif /* log_h */
+    void Logger::SetFileName(const std::string & filename)
+    {
+        int fd=open(filename.c_str(), O_APPEND|O_CREAT|O_WRONLY|O_CLOEXEC);
+        if (fd<0)
+        {
+            return ;
+        }
+        filename_=filename;
+        if (fd_==-1)
+        {
+            fd_=fd;
+        }
+        else
+        {
+            close(fd);
+        }
+
+
+    }
+
+    void Logger::PrintLog(int level, const char* file, int line, const char* func, const char * pram, ...)
+    {
+        if (level>level_)
+        {
+            return;
+        }
+
+        struct timeval now_tv;
+        gettimeofday(&now_tv,NULL); //得到当前时间
+        const time_t seconds=now_tv.tv_sec;
+        struct tm t;
+        localtime_r(&seconds, &t);  //返回当地时间
+
+        char *buffer=new char[4*1024];
+        char* p = buffer;
+        //char* limit = buffer + sizeof(buffer);
+
+        p+= snprintf(p,4*1024,
+                      "%04d/%02d/%02d-%02d:%02d:%02d-%lu[%s]:-%s:%d-%s%s-",
+                      t.tm_year + 1900,
+                      t.tm_mon + 1,
+                      t.tm_mday,
+                      t.tm_hour,
+                      t.tm_min,
+                      t.tm_sec,
+                      long(pthread_self()),
+                      strlevel[level].c_str(),
+                      file,
+                      line,
+                      func,
+                      "()"
+                      );
+
+        va_list pvar;
+        va_start(pvar,pram);
+        p += vsnprintf(p,4*1024,pram,pvar);
+        va_end(pvar);
+
+        if (mode_==FILE)
+            write(fd_, buffer, 1);
+        else if(mode_ == TERMIANAL)
+            pthread_mutex_lock(&logger_mutex);
+            std::cout<<buffer<<std::endl<<std::endl;
+            pthread_mutex_unlock(&logger_mutex);
+        delete []  buffer;
+    }
+}
