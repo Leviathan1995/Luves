@@ -32,29 +32,26 @@ Luves是一个轻量级的事件触发网络库,封装了Socket,简化基于Sock
 ##<a id="title03"> 示例
 简单的半同步/半异步服务器
 
-	#include "luves/luves.h"
-	using namespace luves;
-	
-	void GetInput(const TcpConnPtr & conn)
-	{
-    	std::cout<<conn->GetInputBuffer();
-	}
+		#include "luves/luves.h"
+		using namespace luves;
 
-	int main()
-	{
-    	EventLoop loop;
-    	Ip4Addr server_addr("127.0.0.1",8080);
-    	HshaServer server(&loop, server_addr,4);
-    	server.SetReadCb(GetInput);
-    	server.SetWriteCb([](const TcpConnPtr & conn)
-                      {conn->Send("HTTP/1.1 200 OK\r\n"
-                                  "Content-Type:text/html;charset=utf-8\r\n"
-                                  "Content-Length:18\r\n"
-                                  "\r\n"
-                                  "Welcome to tinyweb");});
-    	server.RunServer();
-    	loop.loop();
-	}
+		Buffer GetInput(const TcpConnectionPtr & conn)
+		{
+    			return conn->GetInputBuffer();
+		}
+
+		int main()
+		{
+    			EventLoop loop;
+    			Ip4Addr server_addr("0.0.0.0",6543);
+				HshaServer server(&loop, server_addr,4);	
+    			server.SetReadCb(GetInput);
+    			server.SetWriteCb([](const TcpConnectionPtr & conn)
+                    		{conn->Send(conn->GetInputBuffer());});
+
+    			server.RunServer();
+    			loop.loop();
+		}
 
 ##<a id="title04"/> HSHA测试结果
 	
