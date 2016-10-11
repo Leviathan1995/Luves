@@ -28,16 +28,27 @@ namespace luves{
 	{
 		struct epoll_event event;
 		event.data.fd = channel->GetFd();
-		event.events = EPOLLIN |EPOLLET;
-
 		if(channel->GetIsListen())
+        {
+            event.events = EPOLLIN |EPOLLET;
+            
 			listen_fd_ = channel->GetFd();
-		channel_fd_map_[channel->GetFd()] = channel;
-		int ret = epoll_ctl(ep_, EPOLL_CTL_ADD, channel->GetFd(), &event);
-		if(ret == -1)
-		{
-			ERROR_LOG("Epoll add file description failed.");
-		}
+            int ret = epoll_ctl(ep_, EPOLL_CTL_ADD, channel->GetFd(), &event);
+            if(ret == -1)
+            {
+                ERROR_LOG("Epoll add file description failed.");
+            }
+        }
+        else
+        {
+            event.events = EPOLLIN|EPOLLOUT|EPOLLET;
+            int ret = epoll_ctl(ep_, EPOLL_CTL_ADD, channel->GetFd(), &event);
+            if(ret == -1)
+            {
+                ERROR_LOG("Epoll add file description failed.");
+            }
+            
+        }
 	}
 
 	void EpollModel::DeleteChannel(Channel * channel)
@@ -70,9 +81,6 @@ namespace luves{
 				else if((listen_fd_ == trigger_events_[i].data.fd) ||
 						((trigger_events_[i].events & EPOLLIN) && (is_hsha_ == false)))
 				{
-					auto event = & trigger_events_[i];
-					auto channel = channel_fd_map_.find(int(event->data.fd))->second;
-					channel->SetActiveEvent(event->events);
 					trigger_channel_list_.push_back(channel_fd_map_.find(int(event->data.fd))->second);
 				}
 				else if(trigger_events_[i].events & EPOLLIN && is_hsha_)
@@ -84,7 +92,7 @@ namespace luves{
 
 	ChannelList & EpollModel::GetTriggerPtr()
 	{
-		return trigger_channel_list_;
+		return trigger_channel_;
 	}
 }
 
