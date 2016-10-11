@@ -10,6 +10,7 @@
 #define TCP_CONNECTION_H_
 
 #include <iostream>
+#include <memory>
 #include <sys/socket.h>
 #include <arpa/inet.h>
 
