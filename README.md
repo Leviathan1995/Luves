@@ -7,7 +7,7 @@ Luves是一个轻量级的事件触发网络库,封装了Socket,简化基于Sock
 
 - [写在前面][0]
 - [安装][1]
-- [技术实现][2]
+- [编译][2]
 - [示例][3]
 - [测试结果][4]
 - [版本更新日志][5]
@@ -27,10 +27,10 @@ Luves是一个轻量级的事件触发网络库,封装了Socket,简化基于Sock
 
 
 ##<a id="title03"> 编译
-		g++ -std=c++11 test_hsha.cpp -L/usr/local/lib  -lluves
+		g++ -std=c++11 test_echo.cpp -L/usr/local/lib  -lluves
 
 ##<a id="title03"> 示例
-简单的半同步/半异步服务器
+简单的Echo服务器
 
 		#include "luves/luves.h"
 		using namespace luves;
@@ -43,50 +43,49 @@ Luves是一个轻量级的事件触发网络库,封装了Socket,简化基于Sock
 		int main()
 		{
     			EventLoop loop;
-    			Ip4Addr server_addr("0.0.0.0",6543);
-				HshaServer server(&loop, server_addr,4);	
+   		 		Ip4Addr server_addr("0.0.0.0", 6543);
+    			TcpServer server(&loop, server_addr);
     			server.SetReadCb(GetInput);
+ 
     			server.SetWriteCb([](const TcpConnectionPtr & conn)
-                    		{conn->Send(conn->GetInputBuffer());});
+                      		{conn->Send(conn->GetInputBuffer());});
 
     			server.RunServer();
     			loop.loop();
 		}
 
-##<a id="title04"/> HSHA测试结果
+##<a id="title04"/> Echo测试结果
 	
 - 使用ApacheBench测试:
 	
-		@ubuntu:~$ ab -n 10000 -c 100 -k http://0.0.0.0:6543/
+		@ubuntu:~$ ab -n 10000 -c 10  -k  http://0.0.0.0:6543/
 - 测试结果:
-
+		
 		Server Software:
 		Server Hostname:        0.0.0.0
 		Server Port:            6543
 
 		Document Path:          /
-		Document Length:        920 bytes
+		Document Length:        0 bytes
 
-		Concurrency Level:      100
-		Time taken for tests:   0.425 seconds
+		Concurrency Level:      10
+		Time taken for tests:   2.998 seconds
 		Complete requests:      10000
-		Failed requests:        9524
-   		(Connect: 0, Receive: 0, Length: 9524, Exceptions: 0)
-		Non-2xx responses:      10000
-		Keep-Alive requests:    10000
-		Total transferred:      68844544 bytes
-		HTML transferred:       67804544 bytes
-		Requests per second:    23527.53 [#/sec] (mean)
-		Time per request:       4.250 [ms] (mean)
-		Time per request:       0.043 [ms] (mean, across all concurrent requests)
-		Transfer rate:          158177.93 [Kbytes/sec] received
+		Failed requests:        0
+		Keep-Alive requests:    0
+		Total transferred:      0 bytes
+		HTML transferred:       0 bytes
+		Requests per second:    3335.80 [#/sec] (mean)
+		Time per request:       2.998 [ms] (mean)
+		Time per request:       0.300 [ms] (mean, across all concurrent requests)
+		Transfer rate:          0.00 [Kbytes/sec] received
 
 		Connection Times (ms)
               		min  mean[+/-sd] median   max
-		Connect:        0    0   0.5      0       8
-		Processing:     0    4  12.9      0     375
-		Waiting:        0    4  12.9      0     375
-		Total:          0    4  13.0      0     375
+		Connect:        0    0   1.2      0      77
+		Processing:     0    3   4.6      2      78
+		Waiting:        0    0   0.0      0       0
+		Total:          1    3   4.7      2      79
 
 ##<a id="title05"/> 版本更新日志
 Version 0.01
@@ -94,6 +93,7 @@ Version 0.01
 - 原型开发,目前使用kqueue,暂支持OS X系统,实现半同步半异步服务器框架.封装了IO事件与定时事件。
 - 实现跨平台,添加Linux平台的Epoll模块。
 - 修复多线程日志bug
+- 修复Hsha模式下kqueue模块bug
 
 
 ##<a id="title06"/> License
