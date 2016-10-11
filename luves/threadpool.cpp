@@ -11,11 +11,14 @@
 namespace luves
 {
     
-    std::vector<int > ThreadsPool::connect_fd_;
-    std::map<int,TcpConnectionPtr>  * ThreadsPool::tcpConnectionFd_;
-    pthread_mutex_t ThreadsPool::pthreadMutex_=PTHREAD_MUTEX_INITIALIZER;
-    pthread_mutex_t ThreadsPool::acceptMutex_=PTHREAD_MUTEX_INITIALIZER;
-    pthread_cond_t ThreadsPool::pthreadCond_=PTHREAD_COND_INITIALIZER;
+    std::queue<int> ThreadsPool::task_;
+    //std::vector<int> ThreadsPool::active_;
+    
+    std::map<int,Channel*>  * ThreadsPool::channel_fd_;
+    
+    pthread_mutex_t ThreadsPool::pthreadMutex_ =    PTHREAD_MUTEX_INITIALIZER;
+    pthread_mutex_t ThreadsPool::task_mutex_  =    PTHREAD_MUTEX_INITIALIZER;
+    pthread_cond_t ThreadsPool::pthreadCond_   =    PTHREAD_COND_INITIALIZER;
     
     std::function<void (const TcpConnectionPtr &)> ThreadsPool::readcb_;
     std::function<void (const TcpConnectionPtr &)> ThreadsPool::writecb_;
@@ -36,37 +39,24 @@ namespace luves
             pthread_create(&pthreadId_[i], NULL, ThreadCallBack, NULL);
     }
     
-    TcpConnectionPtr ThreadsPool::GetTcpConnectionPtr(int fd)
-    {
-        return tcpConnectionFd_->find(fd)->second;
-    }
-    
     void * ThreadsPool::ThreadCallBack(void *data)
     {
-        int fd;
         while (1)
         {
+            int fd = -1;
             pthread_mutex_lock(&pthreadMutex_);
-            while (connect_fd_.size()==0)
+            while (task_.size()==0)
                 pthread_cond_wait(&pthreadCond_,&pthreadMutex_);
             
-            //获取accept套接字
-            pthread_mutex_lock(&acceptMutex_);
-            auto fd_ptr = connect_fd_.begin();
-            fd = *fd_ptr;
-            if (fd_ptr != connect_fd_.end())
-                connect_fd_.erase(fd_ptr);
-            pthread_mutex_unlock(&acceptMutex_);
+            //获取已accept的Channel
+            pthread_mutex_lock(&task_mutex_);
+            fd = task_.front();
+            task_.pop();
+            pthread_mutex_unlock(&task_mutex_);
             pthread_mutex_unlock(&pthreadMutex_);
-
-            //进行回调
-            if (tcpConnectionFd_)
-            {
-                auto tcpconnnection=tcpConnectionFd_->find(fd)->second;
-                tcpconnnection->HandleRead(tcpconnnection);
-                tcpconnnection->HandleWrite(tcpconnnection);
-            }
-
+            
+            if(channel_fd_->find(fd) != channel_fd_->end())
+                channel_fd_->find(fd)->second->HandleEvent();
         }
     
     }

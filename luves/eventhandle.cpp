@@ -18,9 +18,14 @@ namespace luves {
 
         io_model_=std::make_shared<io_model>();
         timer_=std::make_shared<Timer>();
-
     }
-
+    
+    void EventLoop::SetChannelPtr(std::map<int, Channel*>* channel_fd)
+    {
+        channel_fd_ = channel_fd;
+        this->io_model_->SetChannelPtr(channel_fd_);
+    }
+    
     void EventLoop::SetHsha(bool hsha)
     {
         is_hsha_=hsha;
@@ -29,25 +34,23 @@ namespace luves {
 
     void EventLoop::loop()
     {
-        looping_=true;
-        quit_=false;
+        looping_ = true;
+        quit_ = false;
 
         while(!quit_)
         {
             io_model_->RunModel(timer_->GetNextTimeout());
-            trigger_channels_= io_model_->GetTriggerPtr();
+            trigger_channels_ = io_model_->GetTriggerPtr();
             for (auto event:trigger_channels_)
                 event->HandleEvent();
-
             //定时事件模块处理超时事件
             timer_->HandleTimeoutEvent();
         }
     }
 
-
-
     void EventLoop::AddChannel(Channel * channel)
     {
+        channel_fd_->insert(std::make_pair(channel->GetFd(),channel));
         io_model_->AddChannel(channel);
     }
 
@@ -58,6 +61,7 @@ namespace luves {
 
     void EventLoop::DeleteChannel(Channel * channel)
     {
+        channel_fd_->erase(channel->GetFd());
         io_model_->DeleteChannel(channel);
     }
 

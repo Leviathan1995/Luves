@@ -50,11 +50,6 @@ namespace luves
     //
     //Socket
     //
-    Socket::~Socket()
-    {
-        Socket::Close(fd_);
-    }
-
     void Socket::Close(int fd)
     {
         close(fd);

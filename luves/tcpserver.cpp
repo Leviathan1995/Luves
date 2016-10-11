@@ -40,9 +40,8 @@ namespace luves {
     {
         this->Bind();
         this->Listen();
-        listen_channel_->SetEvent(readevent);
-        listen_channel_->SetReadCb([this]{HandleAccept();});
-        listen_channel_->SetIsListen(true);
+
+        loop_->SetChannelPtr(&channel_fd_);
         loop_->AddChannel(listen_channel_);
     }
     
@@ -52,50 +51,35 @@ namespace luves {
         struct sockaddr_in client_addr;
         int accept_fd;
         while((accept_fd=Socket::Accept(listen_channel_->GetFd(), &client_addr))>=0)
-        {
-            sockaddr_in local,peer;
-            socklen_t len=sizeof(local);
-            int ret;
-            ret=getsockname(accept_fd, (struct sockaddr*)&local, &len);
-            if (ret<0)
-            {
-                ERROR_LOG("get local addr failed! %d %s",errno,strerror(errno));
-                continue;
-            }
-            ret=getpeername(accept_fd, (sockaddr*)&peer, &len);
-            if (ret<0)
-            {
-                ERROR_LOG("get peer addr failed! %d %s",errno,strerror(errno));
-                continue;
-            }
-            Ip4Addr local_addr(local),peer_addr(peer);
-            this->NewConnection(accept_fd,local_addr,peer_addr);
-        }
-
+            this->NewChannel(accept_fd);
     }
     
-    void TcpServer::NewConnection(int accept_fd,Ip4Addr local,Ip4Addr peer)
+    void TcpServer::NewChannel(int accept_fd)
     {
-        TcpConnectionPtr connection=TcpConnectionPtr(new TcpConnection(loop_));
-        if (read_cb_)
-            connection->SetReadCb(read_cb_);
-        if (write_cb_)
-            connection->SetWriteCb(write_cb_);
-        if (close_cb_)
-            connection->SetCloseCb(close_cb_);
+        Channel * new_channel = new Channel(loop_, accept_fd, false);
         
-        connection->Register(loop_, accept_fd,local,peer);
-        tcp_connection_fd_[accept_fd]=connection;
+        new_channel->SetReadCb([=]{new_channel->GetConnectionPtr()->HandleRead();});
+        new_channel->SetWriteCb([=]{new_channel->GetConnectionPtr()->HandleWrite();});
+        if (read_cb_)
+            new_channel->GetConnectionPtr()->SetReadCb(read_cb_);
+        if (write_cb_)
+            new_channel->GetConnectionPtr()->SetWriteCb(write_cb_);
+        
+        channel_fd_[accept_fd] = new_channel;
+        loop_->AddChannel(new_channel);
+        
     }
     
     //
     //TCP Client
     //
+
+/*
     void TcpClient::RunClient()
     {
         this->Bind();
         this->HandleConnect();
-        client_channel_->SetEvent(readevent);
+        client_channel_->SetEvent(read_event);
         loop_->UpdateChannel(client_channel_);
         
         TcpConnectionPtr conn=TcpConnectionPtr(new TcpConnection(loop_));
@@ -130,5 +114,5 @@ namespace luves {
         Socket::Bind(client_fd_, &server_addr);
         connect(client_fd_, (struct sockaddr *)&server_addr, sizeof(server_addr));
     }
-    
+*/
 }

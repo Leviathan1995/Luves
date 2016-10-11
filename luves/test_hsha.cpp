@@ -7,7 +7,7 @@
 //
 
 
-#include "luves/luves.h"
+#include "luves.h"
 
 using namespace luves;
 

@@ -13,13 +13,14 @@ namespace luves
 
     void HshaServer::RunServer()
     {
+        server_->SetReadCb(read_cb_);
+        server_->SetWriteCb(write_cb_);
+        server_->SetHsha(true);
+        
         server_->RunServer();
-        server_->SetReadCb(readcb_);
-        server_->SetWriteCb(writecb_);
-        server_->Sethsha(true);
 
         ThreadsPool::SetThreadNum(thread_num_);
-        ThreadsPool::SetTcpConnectionFdPtr(server_->GetTcpConnMap());
+        ThreadsPool::SetChannelPtr(server_->GetChannelPtr());
         ThreadsPool::Instance().CreatePool();
     }
     
