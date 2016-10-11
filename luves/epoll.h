@@ -41,14 +41,15 @@ namespace luves
 			//启动事件模型
 			void RunModel(int64_t wait_time);
 			
-            		ChannelList  & GetTriggerPtr();
+            void SetChannelPtr(std::map<int ,Channel*> * channel_fd){ channel_fd_= channel_fd; }
+        
 			void SetHsha(bool is_hsha){is_hsha = is_hsha_;}
 		private:
 			bool is_hsha_;
 			struct epoll_event trigger_events_[1024];
-			static ChannelMap channel_fd_map_;			//channel与fd映射
-			ChannelList channel_list_;				//channel集合
-			ChannelList trigger_channel_list_;			//触发的channel集合
+			std::map<int ,Channel*> * channel_fd_;			//channel与fd映射
+			ChannelList channel_list_;                      //channel集合
+			ChannelList trigger_channel_list_;              //触发的channel集合
 			int ep_;
 			int max_events_;
 			int listen_fd_;
