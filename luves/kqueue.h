@@ -49,17 +49,16 @@ namespace luves {
 
             void SetHsha(bool is_hsha){is_hsha_=is_hsha;}
 
-            //传递线程池指针
-            //void PassPoolPtr(ThreadsPool *  pool){pool_=pool;}
+            void SetChannelPtr(std::map<int ,Channel*> * channel_fd){ channel_fd_= channel_fd; }
         private:
-            //ThreadsPool * pool_;
+        
             bool is_hsha_;
             int monitor_nums_;                  //监听的事件总数
-            struct kevent monitor_events[1024];
-            struct kevent trigger_events[1024];
-            static ChannelMap channel_fd_map_;  //channel与fd 映射
-            ChannelList channel_list_;          //channel集合
-            ChannelList trigger_channel_list_;  //触发的channel集合
+            struct kevent monitor_events[2048];
+            struct kevent trigger_events[2048];
+            std::map<int ,Channel*> * channel_fd_;      //channel与fd 映射
+            ChannelList monitor_channel_;       //监听的channel集合
+            ChannelList trigger_channel_;       //触发的channel集合
             int kq_;
             int listen_fd_;                     //监听套接字
     };

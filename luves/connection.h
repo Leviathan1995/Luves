@@ -17,6 +17,7 @@
 #include "buffer.h"
 #include "eventhandle.h"
 #include "channel.h"
+#include "logger.h"
 
 namespace luves {
 
@@ -34,10 +35,8 @@ namespace luves {
     {
     public:
 
-        TcpConnection(EventLoop *loop):loop_(loop){};
+        TcpConnection(EventLoop *loop, int fd):loop_(loop), fd_(fd), is_close_(false){};
         ~TcpConnection(){};
-
-        void Register(EventLoop * loop,int fd,Ip4Addr local,Ip4Addr peer);
 
         //设置回调函数
         void SetReadCb(const TcpCallBack & cb){readcb_=cb;}
@@ -45,9 +44,9 @@ namespace luves {
         void SetCloseCb(const TcpCallBack & cb){closecb_=cb;}
 
         //处理读写回调
-        void HandleRead(const TcpConnectionPtr & con);
-        void HandleWrite(const TcpConnectionPtr & con);
-
+        void HandleRead();
+        void HandleWrite();
+        void HandleClose(const TcpConnectionPtr & conn);
         //发送数据
         void Send(Buffer & msg);
         void Send(const std::string & msg);
@@ -56,16 +55,18 @@ namespace luves {
         Buffer & GetInputBuffer(){return input_;}
         Buffer & GetOutputBuffer(){return output_;}
 
-        //处理断开连接
+        //断开连接
         void Close();
 
         //获取事件循环
         EventLoop * GetLoop(){return loop_;};
 
+        bool IsClose(){return is_close_;}
     private:
+        bool is_close_;     //连接是否已经断开
+        int fd_;
         TcpCallBack readcb_,writecb_,closecb_;
         EventLoop * loop_;
-        Channel * channel_;
         Buffer input_,output_;
     };
 

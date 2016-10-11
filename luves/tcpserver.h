@@ -18,7 +18,7 @@
 #include <fcntl.h>
 #include <arpa/inet.h>
 
-#include "tcpconnection.h"
+#include "connection.h"
 
 namespace luves {
     
@@ -32,9 +32,11 @@ namespace luves {
             {
                 SocketOp::SetReuseaddr(listenFd_);
                 SocketOp::SetNonblock(listenFd_);
-                listen_channel_=new Channel(loop,listenFd_);
+                listen_channel_=new Channel(loop,listenFd_,true);
+                listen_channel_->SetReadCb([this]{HandleAccept();});
+                
                 INFO_LOG("Set server ip: %s", addr_.GetIp().c_str());
-                INFO_LOG("Set server ip: %d", addr_.GetPort());
+                INFO_LOG("Set server port: %d", addr_.GetPort());
             };
         virtual ~TcpServer();
         
@@ -42,30 +44,29 @@ namespace luves {
         void Listen();
         
     
-        void NewConnection(int accept_fd,Ip4Addr local,Ip4Addr peer);
+        void NewChannel(int accept_fd);   //Server新建Channel
         
         void HandleAccept();
         
         void SetReadCb(const TcpCallBack & read_cb){read_cb_ = read_cb;}
         void SetWriteCb(const TcpCallBack & write_cb){write_cb_ = write_cb;}
-        void SetCloseCb(const TcpCallBack & close_cb){close_cb_ = close_cb;}
         
         void  RunServer();
         
         struct sockaddr_in * GetServerAddrPointer(){return &serverAddr_;}
         
         EventLoop * GetLoop(){ return loop_;}
-  
-        std::map<int,TcpConnectionPtr> * GetTcpConnMap(){return &tcp_connection_fd_;}
-
-        void Sethsha(bool is_hsha)
+        
+        std::map<int, Channel*>* GetChannelPtr() { return &channel_fd_;}
+          
+        void SetHsha(bool is_hsha)
         {
             is_hsha_ = is_hsha;
             loop_->SetHsha(is_hsha_);
         }
     private:
         
-        std::map<int,TcpConnectionPtr> tcp_connection_fd_;
+        std::map<int, Channel*> channel_fd_;
         struct sockaddr_in serverAddr_;
         std::string ip_;
         short port_;
@@ -74,8 +75,9 @@ namespace luves {
         Ip4Addr addr_;
         EventLoop * loop_;
         Channel * listen_channel_;
-        TcpCallBack read_cb_,write_cb_,close_cb_;
+        TcpCallBack read_cb_,write_cb_;
     };
+    
     
     //
     //Tcp客户端

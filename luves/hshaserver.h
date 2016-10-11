@@ -34,13 +34,13 @@ namespace luves
         void RunServer();
         
         //set call back function
-        void SetReadCb(const HshaCallBack & cb){readcb_=cb;};
-        void SetWriteCb(const HshaCallBack & cb){writecb_=cb;};
+        void SetReadCb(const HshaCallBack & cb){read_cb_=cb;};
+        void SetWriteCb(const HshaCallBack & cb){write_cb_=cb;};
 
     private:
         int thread_num_;
         TcpServerPtr server_;
-        HshaCallBack readcb_,writecb_;
+        HshaCallBack read_cb_,write_cb_;
         
     };
 }

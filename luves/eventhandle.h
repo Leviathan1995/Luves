@@ -21,6 +21,7 @@
 
 #include <memory>
 #include <vector>
+#include <utility>
 #include <map>
 #include <functional>
 #include <unistd.h>
@@ -65,12 +66,16 @@ namespace luves {
         bool stopTimer(TimerId timerid);
         //获取IO模型指针
         std::shared_ptr<io_model> &  GetIOModel(){return io_model_;}
+        
+        void SetChannelPtr(std::map<int, Channel*>* channel_fd);
 
         void Exit();
 
         void SetHsha(bool hsha);
 
     private:
+        
+        std::map<int, Channel*> * channel_fd_;
         bool is_hsha_;
         TriggerChannels trigger_channels_;
         bool looping_;
@@ -82,11 +87,11 @@ namespace luves {
 
 //监听事件类型
 #ifdef __linux__
-    const int readevent = EPOLLIN;
-    const int writeevent = EPOLLOUT;
+    const int read_event = EPOLLIN;
+    const int write_event = EPOLLOUT;
 #elif __APPLE__
-    const int readevent = EVFILT_READ;
-    const int writeevent = EVFILT_WRITE;
+    const int read_event = EVFILT_READ;
+    const int write_event = EVFILT_WRITE;
 #endif
 
 }

@@ -58,7 +58,7 @@ namespace luves {
     {
     public:
         explicit Socket(int fd):fd_(Socket::CreateNonBlockSocket()){}
-        ~Socket();
+        ~Socket(){};
         
         int GetFd(){return fd_;}
         
